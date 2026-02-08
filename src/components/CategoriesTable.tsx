@@ -2,17 +2,19 @@ import Loader from "./Loader"
 import EmptyState from "./EmptyState";
 import type { Category } from "../types/types";
 import { useState } from "react";
+import ErrorMessage from "./ErrorMessage";
 
 type CategoriesTableProps = {
     loading: boolean
     categories: Category[]
-    fetchCategoriesdData: () => Promise<void>
     setCategories: React.Dispatch<React.SetStateAction<Category[]>>
 }
 
-export default function CategoriesTable({ loading, categories, fetchCategoriesdData, setCategories }: CategoriesTableProps) {
+export default function CategoriesTable({ loading, categories, setCategories }: CategoriesTableProps) {
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editingName, setEditingName] = useState('');
+    const [editError, setEditError] = useState<string | null>(null);
+
 
     const handleStartEdit = (category: Category) => {
         setEditingId(category.id);
@@ -36,7 +38,7 @@ export default function CategoriesTable({ loading, categories, fetchCategoriesdD
             setEditingId(null);
             setEditingName('');
         } catch (error) {
-            console.error('Error updating category:', error);
+            setEditError(error instanceof Error ? error.message : "Error updating category");
         }
     };
 
@@ -60,6 +62,7 @@ export default function CategoriesTable({ loading, categories, fetchCategoriesdD
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
+                        {editError && <ErrorMessage title={editError}/>}
                         {loading ? (
                             <tr>
                                 <td colSpan={2} className="py-8">
@@ -72,7 +75,7 @@ export default function CategoriesTable({ loading, categories, fetchCategoriesdD
                                     <EmptyState
                                         title="No categories yet"
                                         description="Start by creating your first category to organize your transactions."
-                                        onReset={()=> alert('category created')}
+                                        onReset={() => alert('category created')}
                                         titleOnReset="Create Category"
                                     />
                                 </td>
@@ -135,46 +138,6 @@ export default function CategoriesTable({ loading, categories, fetchCategoriesdD
                         )}
                     </tbody>
                 </table>
-            </div>
-        </div>
-    );
-}
-
-function CategoryEditModal({ category, onSave, onClose }) {
-    const [name, setName] = useState(category.name);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSave(name);
-    };
-
-    return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-                <h2 className="text-xl font-bold mb-4">Edit Category</h2>
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full px-4 py-2 border rounded-lg mb-4"
-                    />
-                    <div className="flex gap-2 justify-end">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 bg-gray-200 rounded-lg"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-                        >
-                            Save
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
     );

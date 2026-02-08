@@ -1,7 +1,7 @@
 type ErrorProps = {
   title: string
   description?: string
-  onRetry(): void
+  onRetry?(): void
 }
 
 export default function ErrorMessage({ title, description = "Server connection error", onRetry }: ErrorProps) {
