@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Link, NavLink } from "react-router-dom"
 
 export default function Aside() {
     const [open, setOpen] = useState(false)
@@ -29,7 +30,7 @@ export default function Aside() {
             >
                 <div className="p-6 flex justify-between items-cente">
                     <span className="text-xl font-bold tracking-tight text-blue-marguerite-600">
-                        FinTrack
+                        Personal finances
                     </span>
 
                     <button
@@ -42,18 +43,36 @@ export default function Aside() {
 
                 {/* Navegación */}
                 <nav className="flex-1 px-4 space-y-2 mt-4">
-                    <a className="flex items-center gap-3 px-4 py-3 text-text-muted hover:bg-slate-100 rounded-xl transition-all" href="#">
+                    <NavLink to='/dashboard' className={({ isActive }) =>
+                        `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
+                            ? "bg-blue-marguerite-50 text-blue-marguerite-700 font-semibold"
+                            : "text-text-muted hover:bg-slate-100"
+                        }`
+                    }>
                         <span className="font-medium">Dashboard</span>
-                    </a>
-                    <a className="flex items-center gap-3 px-4 py-3 text-text-muted hover:bg-slate-100 rounded-xl transition-all" href="#">
+                    </NavLink>
+                    <NavLink to='/transactions' className={({ isActive }) =>
+                        `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
+                            ? "bg-blue-marguerite-50 text-blue-marguerite-700 font-semibold"
+                            : "text-text-muted hover:bg-slate-100"
+                        }`
+                    }>
                         <span className="font-medium">Transactions</span>
-                    </a>
-                    <a className="flex items-center gap-3 px-4 py-3 text-text-muted hover:bg-slate-100 rounded-xl transition-all" href="#">
+                    </NavLink>
+                    <NavLink to='/categories' className={({ isActive }) =>
+                        `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
+                            ? "bg-blue-marguerite-50 text-blue-marguerite-700 font-semibold"
+                            : "text-text-muted hover:bg-slate-100"
+                        }`
+                    }>
+                        <span className="font-medium">Categories</span>
+                    </NavLink>
+                    <NavLink to={'#'} className="flex items-center gap-3 px-4 py-3 text-text-muted hover:bg-slate-100 rounded-xl transition-all" >
                         <span className="font-medium">Accounts</span>
-                    </a>
-                    <a className="flex items-center gap-3 px-4 py-3 text-text-muted hover:bg-slate-100 rounded-xl transition-all" href="#">
+                    </NavLink>
+                    <NavLink to={"#"} className="flex items-center gap-3 px-4 py-3 text-text-muted hover:bg-slate-100 rounded-xl transition-all" >
                         <span className="font-medium">Settings</span>
-                    </a>
+                    </NavLink>
                 </nav>
 
                 <div className="p-4 border-t border-slate-200">

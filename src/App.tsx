@@ -4,20 +4,27 @@ import { TransactionsContextProvider } from "./context/TransactionsContext"
 import Transactions from "./pages/Transactions"
 import Categories from "./pages/Categories"
 import Aside from "./components/Aside"
+import { Route, Routes } from 'react-router-dom'
 
 function App() {
   return (
     <div className='h-screen flex overflow-hidden bg-body text-slate-900 '>
-      <Aside></Aside>
+      <Aside />
       <main className="flex-1 overflow-y-auto p-8 transition-colors duration-200">
-        <Categories></Categories>
+        <Routes>
+          <Route path="/dashboard" element={
+            <DashboardContextProvider>
+              <Dashboard />
+            </DashboardContextProvider>}>
+          </Route>
+          <Route path="/categories" element={<Categories />}></Route>
+          <Route path="/transactions" element={
+            <TransactionsContextProvider>
+              <Transactions />
+            </TransactionsContextProvider>}>
+          </Route>
+        </Routes>
       </main>
-      {/* <DashboardContextProvider>
-        <Dashboard></Dashboard>
-      </DashboardContextProvider> */}
-      {/* <TransactionsContextProvider>
-        <Transactions></Transactions>
-      </TransactionsContextProvider> */}
     </div>
   )
 }

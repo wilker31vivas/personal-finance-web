@@ -48,7 +48,7 @@ export default function Dashboard() {
     return (
         <main className="min-h-screen" role="main">
             <Header />
-            <div className="mx-auto flex flex-col max-w-7xl px-6 py-4 gap-6  " aria-label="Dashboard content">
+            <div className="mx-auto flex flex-col max-w-7xl py-4 gap-6  " aria-label="Dashboard content">
 
                 <FilterSection filters={filters} updateFilter={updateFilter} />
 
