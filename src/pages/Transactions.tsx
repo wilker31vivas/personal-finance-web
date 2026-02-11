@@ -25,7 +25,7 @@ export default function Transactions() {
     const { error, setFilters } = useTransactions()
 
     return (
-        <div className="min-h-screen my-4">
+        <div className="p-8 min-h-screen my-4">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col justify-between items-center gap-4 mb-8 sm:flex-row">

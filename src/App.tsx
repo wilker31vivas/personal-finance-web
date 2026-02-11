@@ -5,14 +5,15 @@ import Transactions from "./pages/Transactions"
 import Categories from "./pages/Categories"
 import Aside from "./components/Aside"
 import { Route, Routes } from 'react-router-dom'
+import NotFound from "./components/NotFound"
 
 function App() {
   return (
     <div className='h-screen flex overflow-hidden bg-body text-slate-900 '>
       <Aside />
-      <main className="flex-1 overflow-y-auto p-8 transition-colors duration-200">
+      <main className="flex-1 overflow-y-auto transition-colors duration-200">
         <Routes>
-          <Route path="/dashboard" element={
+          <Route path="/" element={
             <DashboardContextProvider>
               <Dashboard />
             </DashboardContextProvider>}>
@@ -23,6 +24,7 @@ function App() {
               <Transactions />
             </TransactionsContextProvider>}>
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </div>

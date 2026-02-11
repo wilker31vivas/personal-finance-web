@@ -27,7 +27,7 @@ export default function Categories() {
     }, [])
 
     return (
-        <div className="max-w-7xl mx-auto">
+        <div className="p-8 max-w-7xl mx-auto">
             {/* Header */}
             <div className="flex flex-col justify-between items-center gap-4 mb-8 sm:flex-row text-center">
                 <div>

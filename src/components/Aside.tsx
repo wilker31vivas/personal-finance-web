@@ -43,7 +43,7 @@ export default function Aside() {
 
                 {/* Navegación */}
                 <nav className="flex-1 px-4 space-y-2 mt-4">
-                    <NavLink to='/dashboard' className={({ isActive }) =>
+                    <NavLink to='/' className={({ isActive }) =>
                         `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
                             ? "bg-blue-marguerite-50 text-blue-marguerite-700 font-semibold"
                             : "text-text-muted hover:bg-slate-100"
