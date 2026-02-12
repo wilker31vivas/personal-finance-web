@@ -8,7 +8,7 @@ function FilterSection() {
     const { filters, updateFilter, resetFilters } = useTransactions()
 
     return (
-        <div className="bg-surface rounded-2xl shadow-md p-6 mb-6">
+        <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-md p-6 mb-6">
             <div className="flex flex-col md:grid md:grid-cols-5 gap-4 justify-center items-center">
 
                 <FilterByYear filters={filters} updateFilter={updateFilter}></FilterByYear>
@@ -33,7 +33,7 @@ export default function Transactions() {
                         <h1 className="text-3xl sm:text-4xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
                             Transactions
                         </h1>
-                        <p className="text-text-muted mt-1">Manage your finances</p>
+                        <p className="text-text-muted dark:text-slate-400 mt-1">Manage your finances</p>
                     </div>
                     <button aria-label="Create new transaction" className="text-lg cursor-pointer bg-gradient-to-r from-blue-marguerite-500 to-blue-marguerite-600 hover:from-blue-marguerite-600 hover:to-blue-marguerite-700 text-white  px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
                         + New Transaction

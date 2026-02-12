@@ -148,7 +148,7 @@ export function FilterByCategory({ filters, updateFilter }: FiltersCardProps) {
                     name="categories"
                     value={filters.category || ''}
                     onChange={e => updateFilter('category', e.target.value)}
-                    className="w-full appearance-none px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl font-medium text-text shadow-sm hover:shadow-md hover:border-blue-marguerite-300 focus:border-blue-marguerite-500 focus:ring-4 focus:ring-blue-marguerite-100 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full appearance-none px-4 py-3 pr-10 bg-white dark:bg-surface-dark border-2 border-gray-200 dark:border-gray-700 rounded-xl font-medium text-text dark:text-gray-100 shadow-sm hover:shadow-md hover:border-blue-marguerite-300 dark:hover:border-blue-marguerite-600 focus:border-blue-marguerite-500 dark:focus:border-blue-marguerite-400 focus:ring-4 focus:ring-blue-marguerite-100 dark:focus:ring-blue-marguerite-900/50 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <option value="">All years</option>
                     <option value="">All categories</option>
@@ -181,7 +181,7 @@ export function FilterByType({ filters, updateFilter }: FiltersCardProps) {
                     id="types"
                     name="types"
                     value={filters.type || ''} onChange={e => updateFilter('type', e.target.value as 'income' | 'expense' | "")}
-                    className="w-full appearance-none px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl font-medium text-text shadow-sm hover:shadow-md hover:border-blue-marguerite-300 focus:border-blue-marguerite-500 focus:ring-4 focus:ring-blue-marguerite-100 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full appearance-none px-4 py-3 pr-10 bg-white dark:bg-surface-dark border-2 border-gray-200 dark:border-gray-700 rounded-xl font-medium text-text dark:text-gray-100 shadow-sm hover:shadow-md hover:border-blue-marguerite-300 dark:hover:border-blue-marguerite-600 focus:border-blue-marguerite-500 dark:focus:border-blue-marguerite-400 focus:ring-4 focus:ring-blue-marguerite-100 dark:focus:ring-blue-marguerite-900/50 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <option value="">All</option>
                     <option value="income">Income</option>

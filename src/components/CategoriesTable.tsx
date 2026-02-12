@@ -48,21 +48,21 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
     };
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-lg">
+        <div className="bg-white dark:bg-surface-dark rounded-2xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-lg dark:shadow-slate-900/50">
             <div className="overflow-x-auto">
                 <table className="w-full text-left" aria-label="Categories table">
                     <thead>
-                        <tr className="bg-gradient-to-r from-blue-marguerite-50 to-purple-50 border-b-2 border-blue-marguerite-200">
-                            <th className="px-6 py-4 text-xs font-bold text-blue-marguerite-700 uppercase tracking-wider">
+                        <tr className="bg-gradient-to-r from-blue-marguerite-50 to-purple-50 dark:from-blue-marguerite-950/30 dark:to-purple-950/30 border-b-2 border-blue-marguerite-200 dark:border-blue-marguerite-800">
+                            <th className="px-6 py-4 text-xs font-bold text-blue-marguerite-700 dark:text-blue-marguerite-300 uppercase tracking-wider">
                                 Category Name
                             </th>
-                            <th className="px-6 py-4 text-xs font-bold text-blue-marguerite-700 uppercase tracking-wider text-right">
+                            <th className="px-6 py-4 text-xs font-bold text-blue-marguerite-700 dark:text-blue-marguerite-300 uppercase tracking-wider text-right">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {editError && <ErrorMessage title={editError}/>}
+                    <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                        {editError && <ErrorMessage title={editError} />}
                         {loading ? (
                             <tr>
                                 <td colSpan={2} className="py-8">
@@ -84,11 +84,11 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
                             categories.map((item) => (
                                 <tr
                                     key={item.id}
-                                    className="hover:bg-blue-marguerite-50/50 transition-all duration-200 group"
+                                    className="hover:bg-blue-marguerite-50/50 dark:hover:bg-slate-800/50 transition-all duration-200 group"
                                 >
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-2.5 h-2.5 rounded-full bg-blue-marguerite-600 opacity-70 group-hover:opacity-100 transition" />
+                                            <div className="w-2.5 h-2.5 rounded-full bg-blue-marguerite-600 dark:bg-blue-marguerite-400 opacity-70 group-hover:opacity-100 transition" />
                                             {editingId === item.id ? (
                                                 <input
                                                     type="text"
@@ -100,10 +100,10 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
                                                         if (e.key === 'Escape') handleCancelEdit();
                                                     }}
                                                     autoFocus
-                                                    className="text-sm font-semibold text-gray-800 border-2 border-blue-marguerite-500 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-marguerite-300"
+                                                    className="text-sm font-semibold text-gray-800 dark:text-gray-200 dark:bg-slate-800 border-2 border-blue-marguerite-500 dark:border-blue-marguerite-600 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-marguerite-300 dark:focus:ring-blue-marguerite-700"
                                                 />
                                             ) : (
-                                                <span className="text-sm font-semibold text-gray-800 group-hover:text-blue-marguerite-700 transition-colors duration-200">
+                                                <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-blue-marguerite-700 dark:group-hover:text-blue-marguerite-400 transition-colors duration-200">
                                                     {item.name}
                                                 </span>
                                             )}
@@ -113,7 +113,7 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
                                         <div className="flex gap-2 justify-end items-center">
                                             <button
                                                 onClick={() => handleStartEdit(item)}
-                                                className="group/btn flex items-center gap-2 px-4 py-2.5 bg-blue-marguerite-50 hover:bg-blue-marguerite-500 text-blue-marguerite-700 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-blue-marguerite-200 hover:border-blue-marguerite-500"
+                                                className="group/btn flex items-center gap-2 px-4 py-2.5 bg-blue-marguerite-50 dark:bg-blue-marguerite-950/30 hover:bg-blue-marguerite-500 dark:hover:bg-blue-marguerite-600 text-blue-marguerite-700 dark:text-blue-marguerite-300 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-blue-marguerite-200 dark:border-blue-marguerite-800 hover:border-blue-marguerite-500 dark:hover:border-blue-marguerite-600"
                                                 aria-label={`Edit ${item.name}`}
                                             >
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +123,7 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
                                             </button>
                                             <button
                                                 onClick={() => alert(`Category ${item.name} deleted`)}
-                                                className="group/btn flex items-center gap-2 px-4 py-2.5 bg-red-50 hover:bg-red-500 text-red-700 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-red-200 hover:border-red-500"
+                                                className="group/btn flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-950/30 hover:bg-red-500 dark:hover:bg-red-600 text-red-700 dark:text-red-400 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-red-200 dark:border-red-900 hover:border-red-500 dark:hover:border-red-600"
                                                 aria-label={`Delete ${item.name}`}
                                             >
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
