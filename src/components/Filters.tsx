@@ -41,7 +41,7 @@ export function FilterByYear({ filters, updateFilter }: FiltersCardProps) {
                     value={filters.year || ''}
                     onChange={e => updateFilter('year', e.target.value)}
                     // disabled={isLoading}
-                    className="w-full appearance-none px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl font-medium text-text shadow-sm hover:shadow-md hover:border-blue-marguerite-300 focus:border-blue-marguerite-500 focus:ring-4 focus:ring-blue-marguerite-100 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full appearance-none px-4 py-3 pr-10 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl font-medium text-text dark:text-gray-100 shadow-sm hover:shadow-md hover:border-blue-marguerite-300 dark:hover:border-blue-marguerite-600 focus:border-blue-marguerite-500 dark:focus:border-blue-marguerite-400 focus:ring-4 focus:ring-blue-marguerite-100 dark:focus:ring-blue-marguerite-900/50 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <option value="">All years</option>
                     {allYears.map((item) => (
@@ -94,7 +94,7 @@ export function FilterByMonth({ filters, updateFilter }: FiltersCardProps) {
                     name="month"
                     value={filters.month || ''}
                     onChange={e => updateFilter('month', e.target.value)}
-                    className="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl font-medium text-text shadow-sm hover:shadow-md hover:border-blue-marguerite-300 focus:border-blue-marguerite-500 focus:ring-4 focus:ring-blue-marguerite-100 transition-all duration-300 outline-none cursor-pointer appearance-none"
+                    className="w-full appearance-none px-4 py-3 pr-10 bg-white dark:bg-surface-dark border-2 border-gray-200 dark:border-gray-700 rounded-xl font-medium text-text dark:text-gray-100 shadow-sm hover:shadow-md hover:border-blue-marguerite-300 dark:hover:border-blue-marguerite-600 focus:border-blue-marguerite-500 dark:focus:border-blue-marguerite-400 focus:ring-4 focus:ring-blue-marguerite-100 dark:focus:ring-blue-marguerite-900/50 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <option value="">All months</option>
                     {months.map((month) => (

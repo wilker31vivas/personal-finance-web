@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { Link, NavLink } from "react-router-dom"
+import { NavLink } from "react-router-dom"
+import DarkModeToggle from "./DarkModeToggle"
 
 export default function Aside() {
     const [open, setOpen] = useState(false)
@@ -75,7 +76,8 @@ export default function Aside() {
                     </NavLink>
                 </nav>
 
-                <div className="p-4 border-t border-slate-200">
+                <div className="p-4 border-t border-slate-200 flex">
+                    <DarkModeToggle></DarkModeToggle>
                     <button className="flex items-center justify-between w-full px-4 py-3 rounded-xl hover:bg-slate-100 text-text-muted transition-all">
                         <span className="font-medium">Appearance</span>
                     </button>

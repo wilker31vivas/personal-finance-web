@@ -11,7 +11,7 @@ export default function BalanceCard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard title="Total incomes" amount={income} change={balanceData.change.income} bgColor="bg-success" titleColor="text-surface"></StatCard>
             <StatCard title="Total expenses" amount={expense} change={balanceData.change.expense} bgColor="bg-danger" titleColor="text-surface"></StatCard>
-            <StatCard title="Balance" amount={balance} change={balanceData.change.balance} bgColor="bg-white" textColor={balance !== null && balance >= 0 ? 'text-success' : 'text-danger'}></StatCard>
+            <StatCard title="Balance" amount={balance} change={balanceData.change.balance} titleColor='text-slate-500 dark:text-slate-400' bgColor="bg-surface dark:bg-surface-dark" textColor={balance !== null && balance >= 0 ? 'text-success' : 'text-danger'}></StatCard>
         </div>
     )
 }
@@ -27,9 +27,9 @@ interface BalanceCardItemProps {
 
 function StatCard({ title, amount, change, bgColor, textColor, titleColor }: BalanceCardItemProps) {
     return (
-        <div className={`${bgColor} ${titleColor} p-4 w-fullp-6 rounded-2xl shadow-lg`}>
-            <h2 className="text-sm font-medium mb-1">{title}</h2>
-            <p className={`text-xl sm:text-2xl font-bold ${textColor}`}>
+        <div className={`${bgColor} ${titleColor} flex flex-col gap-2 p-6 w-full rounded-2xl shadow-sm border-slate-200`}>
+            <h2 className="text-sm font-medium">{title}</h2>
+            <p className={`text-2xl sm:text-3xl font-bold ${textColor}`}>
                 {formatCurrency(amount)}
             </p>
             {change !== null && change !== 0 && (

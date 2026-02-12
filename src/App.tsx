@@ -9,9 +9,9 @@ import NotFound from "./components/NotFound"
 
 function App() {
   return (
-    <div className='h-screen flex overflow-hidden bg-body text-slate-900 '>
+    <div className='h-screen flex overflow-hidden bg-background-light dark:bg-background-dark text-slate-900 '>
       <Aside />
-      <main className="flex-1 overflow-y-auto transition-colors duration-200">
+      <main className=" flex-1 overflow-y-auto transition-colors duration-200">
         <Routes>
           <Route path="/" element={
             <DashboardContextProvider>

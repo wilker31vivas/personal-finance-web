@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
 
 @theme {
   --color-blue-marguerite-50: #eef0ff;
@@ -13,7 +15,9 @@
   --color-blue-marguerite-900: #3a2f80;
   --color-blue-marguerite-950: #241c4a;
 
-  --color-body: #f0f2f8;
+  --color-background-light: #f0f2f8;
+  --color-background-dark: #0f172a;
+  --color-surface-dark: #1e2939;
   --color-surface: #ffffff;
   --color-text: #060606;
   --color-text-muted: #6b7280;

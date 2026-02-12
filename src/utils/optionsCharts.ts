@@ -1,25 +1,58 @@
 import type { DataOptions } from "../types/types";
 
-export const getOptionCategories = (data: DataOptions[]) => {
+export const getOptionCategories = (data: DataOptions[], isDark: boolean = false) => {
   const baseOption = {
     color: '#533ac8',
     title: {
       text: "Category Distribution",
+      textStyle: {
+        color: isDark ? '#e2e8f0' : '#333',
+      },
     },
     tooltip: {
       trigger: "axis",
       axisPointer: {
         type: "shadow",
       },
+      backgroundColor: isDark ? "rgba(30, 41, 57, 0.9)" : "rgba(255, 255, 255, 0.9)",
+      borderColor: isDark ? "#475569" : "#e2e8f0",
+      textStyle: {
+        color: isDark ? '#e2e8f0' : '#333',
+      },
     },
-    legend: {},
+    legend: {
+      textStyle: {
+        color: isDark ? '#cbd5e1' : '#333',
+      },
+    },
     xAxis: {
       type: "value",
       boundaryGap: [0, 0.01],
+      axisLabel: {
+        color: isDark ? '#94a3b8' : '#666',
+      },
+      axisLine: {
+        lineStyle: {
+          color: isDark ? '#475569' : '#e2e8f0',
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          color: isDark ? '#334155' : '#f1f5f9',
+        },
+      },
     },
     yAxis: {
       type: "category",
       data: data?.map((item) => item.name),
+      axisLabel: {
+        color: isDark ? '#94a3b8' : '#666',
+      },
+      axisLine: {
+        lineStyle: {
+          color: isDark ? '#475569' : '#e2e8f0',
+        },
+      },
     },
     series: [
       {
@@ -33,25 +66,70 @@ export const getOptionCategories = (data: DataOptions[]) => {
   return baseOption;
 };
 
-export const getOptionExpensesAndIncome = (data: DataOptions[]) => {
+export const getOptionExpensesAndIncome = (data: DataOptions[], isDark: boolean = false) => {
   const baseOption = {
     color: '#533ac8',
     title: {
       text: "Income vs. Expenses",
+      textStyle: {
+        color: isDark ? '#e2e8f0' : '#333',
+      },
+    },
+    tooltip: {
+      backgroundColor: isDark ? "rgba(30, 41, 57, 0.9)" : "rgba(255, 255, 255, 0.9)",
+      borderColor: isDark ? "#475569" : "#e2e8f0",
+      textStyle: {
+        color: isDark ? '#e2e8f0' : '#333',
+      },
     },
     xAxis: {
       type: "category",
       boundaryGap: false,
       data: data?.map((item) => item.name),
+      axisLabel: {
+        color: isDark ? '#94a3b8' : '#666',
+      },
+      axisLine: {
+        lineStyle: {
+          color: isDark ? '#475569' : '#e2e8f0',
+        },
+      },
     },
     yAxis: {
       type: "value",
+      axisLabel: {
+        color: isDark ? '#94a3b8' : '#666',
+      },
+      axisLine: {
+        lineStyle: {
+          color: isDark ? '#475569' : '#e2e8f0',
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          color: isDark ? '#334155' : '#f1f5f9',
+        },
+      },
     },
     series: [
       {
         data: data?.map((item) => item.value),
         type: "line",
-        areaStyle: {},
+        areaStyle: {
+          color: isDark 
+            ? {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  { offset: 0, color: 'rgba(83, 58, 200, 0.3)' },
+                  { offset: 1, color: 'rgba(83, 58, 200, 0.05)' }
+                ]
+              }
+            : {},
+        },
       },
     ],
   };
@@ -63,6 +141,7 @@ export const getOptionTopFiveCategories = (
   data: DataOptions[],
   isMobile: boolean,
   isTablet: boolean,
+  isDark: boolean = false,
 ) => {
   const baseOption = {
     backgroundColor: "transparent",
@@ -75,7 +154,7 @@ export const getOptionTopFiveCategories = (
       textStyle: {
         fontSize: isMobile ? 16 : isTablet ? 20 : 24,
         fontWeight: "bold",
-        color: "#333",
+        color: isDark ? '#e2e8f0' : '#333',
       },
     },
 
@@ -83,8 +162,8 @@ export const getOptionTopFiveCategories = (
       show: !isMobile,
       trigger: "item",
       formatter: "{a} <br/>{b}: {c} ({d}%)",
-      backgroundColor: "rgba(50,50,50,0.7)",
-      borderColor: "#333",
+      backgroundColor: isDark ? "rgba(30, 41, 57, 0.9)" : "rgba(50,50,50,0.7)",
+      borderColor: isDark ? "#475569" : "#333",
       borderWidth: 1,
       textStyle: {
         color: "#fff",
@@ -102,11 +181,11 @@ export const getOptionTopFiveCategories = (
       itemHeight: isMobile ? 13 : 14,
       textStyle: {
         fontSize: isMobile ? 12 : 14,
-        color: "#333",
+        color: isDark ? '#cbd5e1' : '#333',
         rich: {
           bold: {
             fontWeight: "bold",
-            color: "#333", // Puedes cambiar el color si quieres
+            color: isDark ? '#e2e8f0' : '#333',
           },
         },
       },
@@ -138,17 +217,20 @@ export const getOptionTopFiveCategories = (
           position: "outside",
           formatter: "{b}\n{d}%",
           fontSize: isMobile ? 10 : isTablet ? 11 : 13,
-          color: "#333",
+          color: isDark ? '#cbd5e1' : '#333',
         },
 
         labelLine: {
           show: !isMobile,
           length: isMobile ? 10 : isTablet ? 15 : 20,
           length2: isMobile ? 5 : isTablet ? 10 : 15,
+          lineStyle: {
+            color: isDark ? '#475569' : '#d1d5db',
+          },
         },
 
         itemStyle: {
-          borderColor: "#fff",
+          borderColor: isDark ? '#1e2939' : '#fff',
           borderWidth: isMobile ? 2 : 3,
           borderRadius: isMobile ? 4 : 8,
         },
@@ -158,12 +240,13 @@ export const getOptionTopFiveCategories = (
           scaleSize: isMobile ? 5 : 10,
           itemStyle: {
             shadowBlur: isMobile ? 10 : 20,
-            shadowColor: "rgba(0, 0, 0, 0.3)",
+            shadowColor: isDark ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.3)",
           },
           label: {
             show: !isMobile,
             fontSize: isMobile ? 12 : isTablet ? 14 : 16,
             fontWeight: "bold",
+            color: isDark ? '#e2e8f0' : '#333',
           },
         },
       },
