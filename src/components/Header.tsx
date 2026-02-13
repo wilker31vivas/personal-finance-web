@@ -4,13 +4,12 @@ export default function Header() {
   return (
     <header className="relative px-4 py-2 sm:px-8 sm:py-4 bg-gradient-to-br from-blue-marguerite-600 via-blue-marguerite-500 to-blue-marguerite-700 shadow-lg overflow-hidden">
 
-      <div className="flex items-center justify-between">
-
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white drop-shadow-sm">
+      <div className="flex items-center justify-evenly md:justify-between">
+        <div className='text-center'>
+          <h1 className=" text-lg sm:text-xl font-semibold text-blue-marguerite-100">
             Welcome back,
           </h1>
-          <p className="text-lg sm:text-xl font-semibold text-blue-marguerite-100 mt-1">
+          <p className="text-xl sm:text-2xl font-bold text-white drop-shadow-sm">
             Wilker
           </p>
         </div>

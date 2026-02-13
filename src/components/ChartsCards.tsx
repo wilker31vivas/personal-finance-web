@@ -35,8 +35,8 @@ export default function ChartsCards() {
             {totalExpenses === 0 && totalIncome > 0 ? (
                 <EmptyState title='No expenses recorded' description='Your transactions this period were all income. When you record an expense, you will see here which categories you are spending the most in.' />
             ) :
-                <div className='grid md:grid-cols-2 gap-6'>
-                     <ChartCard getOption={getOptionTopFiveCategories(topCategories, isMobile, isTablet, isDark)} chartHeight={chartHeight} />
+                <div className='grid lg:grid-cols-2 gap-6'>
+                    <ChartCard getOption={getOptionTopFiveCategories(topCategories, isMobile, isTablet, isDark)} chartHeight={chartHeight} />
                     <ChartCard getOption={getOptionCategories(allCategories, isDark)} chartHeight={chartHeight} />
                 </div>
             }
