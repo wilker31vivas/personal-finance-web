@@ -45,3 +45,6 @@ export async function getAllCategories(filters = {}): Promise<DataOptions[]> {
   if (!res.ok) throw new Error(`Error fetching categories ${res.status}`);
   return res.json();
 }
+
+export async function newTransactions() {
+}
