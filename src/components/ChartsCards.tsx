@@ -44,7 +44,10 @@ export default function ChartsCards() {
     )
 }
 
-export function ChartCard({ getOption, chartHeight }) {
+export function ChartCard({ getOption, chartHeight }: {
+    getOption: any;
+    chartHeight: any;
+}) {
     return (
         <div
             className={`
