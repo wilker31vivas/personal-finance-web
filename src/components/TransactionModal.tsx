@@ -1,32 +1,47 @@
 import { useState } from 'react';
+import { useTransactions } from '../context/TransactionsContext';
+import { newTransaction } from '../api/transactions'
+import type { Transaction } from '../types/types';
 
-function TransactionModal({ isOpen, onClose }) {
-    const [formData, setFormData] = useState({
-        description: '',
-        amount: '',
-        type: 'expense',
-        category: '',
-        date: new Date().toISOString().split('T')[0]
-    });
+const getTodayLocalDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
 
-    const handleSubmit = (e) => {
+const INITIAL_VALUE: Transaction = {
+    description: '',
+    amount: 0,
+    type: 'expense',
+    category: 'food',
+    date: getTodayLocalDate()
+}
+
+interface TransactionModalProps {
+    isOpen: boolean,
+    onClose: () => void
+}
+
+export default function TransactionModal({ isOpen, onClose }: TransactionModalProps) {
+    const { categories, loadData } = useTransactions()
+    const [formData, setFormData] = useState<Transaction>(INITIAL_VALUE);
+
+    const handleSubmit = (e: any) => {
         e.preventDefault();
-        console.log('Transaction data:', formData);
+        newTransaction(formData)
+        loadData()
         onClose();
-        setFormData({
-            description: '',
-            amount: '',
-            type: 'expense',
-            category: '',
-            date: new Date().toISOString().split('T')[0]
-        });
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: any) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: name === 'amount'
+                ? (value === '' ? 0 : Number(value))
+                : value
         }));
     };
 
@@ -75,7 +90,7 @@ function TransactionModal({ isOpen, onClose }) {
                             type="number"
                             id="amount"
                             name="amount"
-                            value={formData.amount}
+                            value={formData.amount === 0 ? '' : formData.amount}
                             onChange={handleChange}
                             required
                             step="0.01"
@@ -105,16 +120,18 @@ function TransactionModal({ isOpen, onClose }) {
                         <label htmlFor="category" className="block text-sm font-medium text-text dark:text-slate-300 mb-2">
                             Category
                         </label>
-                        <input
-                            type="text"
+                        <select
                             id="category"
                             name="category"
                             value={formData.category}
                             onChange={handleChange}
                             required
-                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-marguerite-500 focus:border-transparent outline-none transition-all text-text dark:text-white"
-                            placeholder="Enter category..."
-                        />
+                            className="w-full appearance-none px-4 py-3 pr-10 bg-white dark:bg-surface-dark border-2 border-gray-200 dark:border-gray-700 rounded-xl text-text dark:text-gray-100 shadow-sm hover:shadow-md hover:border-blue-marguerite-300 dark:hover:border-blue-marguerite-600 focus:border-blue-marguerite-500 dark:focus:border-blue-marguerite-400 focus:ring-4 focus:ring-blue-marguerite-100 dark:focus:ring-blue-marguerite-900/50 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {categories?.map((item, index) => (
+                                <option value={item.name.toLocaleLowerCase()} key={index}>{item.name}</option>
+                            ))}
+                        </select>
                     </div>
 
                     <div>

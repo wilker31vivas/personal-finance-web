@@ -5,7 +5,7 @@ export default function Header() {
     <header className="relative px-4 py-2 sm:px-8 sm:py-4 bg-gradient-to-br from-blue-marguerite-600 via-blue-marguerite-500 to-blue-marguerite-700 shadow-lg overflow-hidden">
 
       <div className="flex items-center justify-evenly md:justify-between">
-        <div className='text-center'>
+        <div>
           <h1 className=" text-lg sm:text-xl font-semibold text-blue-marguerite-100">
             Welcome back,
           </h1>

@@ -1,6 +1,7 @@
 import type { Filters, UpdateFilterType } from "../types/types"
-import { getYears, getCategories } from '../api/transactions'
+import { getYears,  } from '../api/transactions'
 import { useEffect, useState } from "react"
+import { useTransactions } from '../context/TransactionsContext';
 
 type ButtonProps = {
     resetFilters: () => void
@@ -122,22 +123,7 @@ export function FilterByMonth({ filters, updateFilter }: FiltersCardProps) {
 }
 
 export function FilterByCategory({ filters, updateFilter }: FiltersCardProps) {
-    const [categories, setCategories] = useState<string[]>([])
-
-    async function loadCategories() {
-        try {
-            const res = await getCategories()
-            const c = res.map((item) => item.name)
-            setCategories(c)
-        } catch (err) {
-            console.error('Error loading categories:', err)
-        }
-    }
-
-    useEffect(() => {
-        loadCategories()
-    }, [])
-
+    const { categories } = useTransactions()
 
     return (
         <div className="w-full flex flex-col gap-2">
@@ -150,10 +136,9 @@ export function FilterByCategory({ filters, updateFilter }: FiltersCardProps) {
                     onChange={e => updateFilter('category', e.target.value)}
                     className="w-full appearance-none px-4 py-3 pr-10 bg-white dark:bg-surface-dark border-2 border-gray-200 dark:border-gray-700 rounded-xl font-medium text-text dark:text-gray-100 shadow-sm hover:shadow-md hover:border-blue-marguerite-300 dark:hover:border-blue-marguerite-600 focus:border-blue-marguerite-500 dark:focus:border-blue-marguerite-400 focus:ring-4 focus:ring-blue-marguerite-100 dark:focus:ring-blue-marguerite-900/50 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    <option value="">All years</option>
-                    <option value="">All categories</option>
-                    {categories.map((item, index) => (
-                        <option value={item} key={index}>{item}</option>
+                    <option value="">All Categories</option>
+                    {categories?.map((item) => (
+                        <option value={item.name} key={item.name}>{item.name}</option>
                     ))}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
@@ -183,7 +168,7 @@ export function FilterByType({ filters, updateFilter }: FiltersCardProps) {
                     value={filters.type || ''} onChange={e => updateFilter('type', e.target.value as 'income' | 'expense' | "")}
                     className="w-full appearance-none px-4 py-3 pr-10 bg-white dark:bg-surface-dark border-2 border-gray-200 dark:border-gray-700 rounded-xl font-medium text-text dark:text-gray-100 shadow-sm hover:shadow-md hover:border-blue-marguerite-300 dark:hover:border-blue-marguerite-600 focus:border-blue-marguerite-500 dark:focus:border-blue-marguerite-400 focus:ring-4 focus:ring-blue-marguerite-100 dark:focus:ring-blue-marguerite-900/50 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    <option value="">All</option>
+                    <option value="">All types</option>
                     <option value="income">Income</option>
                     <option value="expense">Expense</option>
                 </select>

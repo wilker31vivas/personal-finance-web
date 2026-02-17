@@ -21,11 +21,11 @@ export interface Balance {
 }
 
 export interface Transaction {
-    id: string
+    id?: string
     type: "income" | "expense"
     category: string
     description: string
-    date: Date
+    date: string
     amount: number
 }
 
@@ -40,7 +40,7 @@ export interface DataOptions {
 }
 
 export type Filters = {
-     type?: "" | 'income' | 'expense',
+    type?: "" | 'income' | 'expense',
     category?: string,
     month?: string,
     year?: string,
