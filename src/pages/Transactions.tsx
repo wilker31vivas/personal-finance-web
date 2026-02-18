@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import ErrorMessage from '../components/ErrorMessage';
+import { ErrorState } from '../components/Message';
 import { FilterByYear, FilterByCategory, FilterByMonth, FilterByType, FilterButton } from '../components/Filters'
 import TransactionsTable from '../components/TransactionsTable'
 import { useTransactions, INITIAL_FILTERS } from '../context/TransactionsContext';
-import TransactionModal from '../components/TransactionModal' 
+import TransactionModal from '../components/TransactionModal'
 
 function FilterSection() {
     const { filters, updateFilter, resetFilters } = useTransactions()
@@ -48,7 +48,7 @@ export default function Transactions() {
                 <FilterSection />
 
                 {error ? (
-                    <ErrorMessage title={error} onRetry={() =>
+                    <ErrorState title={error} onRetry={() =>
                         setFilters(INITIAL_FILTERS)
                     } />
                 ) : (

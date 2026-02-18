@@ -2,7 +2,7 @@ import Loader from "./Loader"
 import EmptyState from "./EmptyState";
 import type { Category } from "../types/types";
 import { useState } from "react";
-import ErrorMessage from "./ErrorMessage";
+import { ErrorState } from "./Message";
 
 type CategoriesTableProps = {
     loading: boolean
@@ -62,7 +62,7 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
-                        {editError && <ErrorMessage title={editError} />}
+                        {editError && <ErrorState title={editError} />}
                         {loading ? (
                             <tr>
                                 <td colSpan={2} className="py-8">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import ErrorMessage from "../components/ErrorMessage"
+import { ErrorState } from "../components/Message"
 import CategoriesTable from "../components/CategoriesTable"
 import { getCategories } from "../api/transactions";
 import type { Category } from "../types/types";
@@ -42,7 +42,7 @@ export default function Categories() {
             </div>
 
             {error ? (
-                <ErrorMessage title={error} onRetry={fetchCategoriesData}></ErrorMessage>
+                <ErrorState title={error} onRetry={fetchCategoriesData}></ErrorState>
             ) :
                 <CategoriesTable loading={loading} categories={categories} setCategories={setCategories}></CategoriesTable>
             }

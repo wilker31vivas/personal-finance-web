@@ -3,7 +3,7 @@ import Header from '../components/Header'
 import ChartsCards from '../components/ChartsCards'
 import { FilterByYear, FilterByMonth } from '../components/Filters'
 import { useDashboard, INITIAL_FILTERS } from '../context/DashboardContext';
-import ErrorMessage from '../components/ErrorMessage'
+import { ErrorState } from '../components/Message'
 import Loader from '../components/Loader';
 import type { Filters } from '../types/types';
 import EmptyStateDemo from '../components/EmptyState';
@@ -53,7 +53,7 @@ export default function Dashboard() {
                 <FilterSection filters={filters} updateFilter={updateFilter} />
 
                 {error ? (
-                    <ErrorMessage title={error} onRetry={fetchDashboardData} />
+                    <ErrorState title={error} onRetry={fetchDashboardData} />
                 ) : loading ? (
                     <Loader description="Loading dashboard..." />
                 ) : (

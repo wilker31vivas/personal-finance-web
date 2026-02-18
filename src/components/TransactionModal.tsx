@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTransactions } from '../context/TransactionsContext';
 import { createTransaction } from '../api/transactions'
 import type { Transaction } from '../types/types';
+import { WarningState } from './Message';
 
 const getTodayLocalDate = () => {
     const today = new Date();
@@ -27,19 +28,40 @@ interface TransactionModalProps {
 export default function TransactionModal({ isOpen, onClose }: TransactionModalProps) {
     const { categories, loadData } = useTransactions()
     const [formData, setFormData] = useState<Transaction>(INITIAL_VALUE);
+    const [error, setError] = useState<null | string>(null)
+
+    const validate = (data: typeof formData): string | null => {
+        if (!data.description.trim()) return 'The description cannot be empty.';
+        if (data.amount <= 0) return 'The amount must be greater than 0';
+        return null;
+    };
+
+    const reset = () => {
+        setError(null)
+        setFormData(INITIAL_VALUE)
+        onClose();
+    }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        const validationError = validate(formData);
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
+
         try {
             await createTransaction(formData);
             await loadData();
-            onClose();
+            reset()
         } catch (error) {
-            console.error(error);
-        }   
+            setError('An error occurred while saving. Please try again.');
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        setError(null);
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -59,7 +81,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                         New Transaction
                     </h2>
                     <button
-                        onClick={onClose}
+                        onClick={reset}
                         className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         aria-label="Close modal"
                     >
@@ -80,7 +102,6 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
-                            required
                             className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-marguerite-500 focus:border-transparent outline-none transition-all text-text dark:text-white"
                             placeholder="Enter description..."
                         />
@@ -96,7 +117,6 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                             name="amount"
                             value={formData.amount === 0 ? '' : formData.amount}
                             onChange={handleChange}
-                            required
                             step="0.01"
                             min="0"
                             className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-marguerite-500 focus:border-transparent outline-none transition-all text-text dark:text-white"
@@ -129,7 +149,6 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                             name="category"
                             value={formData.category}
                             onChange={handleChange}
-                            required
                             className="w-full appearance-none px-4 py-3 pr-10 bg-white dark:bg-surface-dark border-2 border-gray-200 dark:border-gray-700 rounded-xl text-text dark:text-gray-100 shadow-sm hover:shadow-md hover:border-blue-marguerite-300 dark:hover:border-blue-marguerite-600 focus:border-blue-marguerite-500 dark:focus:border-blue-marguerite-400 focus:ring-4 focus:ring-blue-marguerite-100 dark:focus:ring-blue-marguerite-900/50 transition-all duration-300 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {categories?.map((item, index) => (
@@ -148,15 +167,16 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                             name="date"
                             value={formData.date}
                             onChange={handleChange}
-                            required
                             className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-marguerite-500 focus:border-transparent outline-none transition-all text-text dark:text-white"
                         />
                     </div>
 
+                    {error && <WarningState message={error}></WarningState>}
+
                     <div className="flex gap-3 pt-4">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={reset}
                             className="flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                         >
                             Cancel

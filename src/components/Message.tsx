@@ -4,7 +4,7 @@ type ErrorProps = {
   onRetry?(): void
 }
 
-export default function ErrorMessage({ title, description = "Server connection error", onRetry }: ErrorProps) {
+export function ErrorState({ title, description = "Server connection error", onRetry }: ErrorProps) {
    return (
       <div className="flex sm:flex-row sm:justify-between flex-col items-center gap-4 rounded-lg border border-red-200 bg-red-50 px-6 py-4">
         <div className="flex items-center justify-center gap-3">
@@ -28,3 +28,12 @@ export default function ErrorMessage({ title, description = "Server connection e
       </div>
     );
 }
+
+export const WarningState = ({ message }: { message: string }) => (
+  <div className="flex sm:flex-row sm:justify-between flex-col items-center gap-4 rounded-lg border border-yellow-200 bg-yellow-50 px-6 py-4">
+    <div className="flex items-center justify-center gap-3">
+      <span className="text-yellow-500 text-lg sm:text-2xl">⚠️</span>
+      <p className="font-semibold text-yellow-700">{message}</p>
+    </div>
+  </div>
+);
