@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTransactions } from '../context/TransactionsContext';
-import { newTransaction } from '../api/transactions'
+import { createTransaction } from '../api/transactions'
 import type { Transaction } from '../types/types';
 
 const getTodayLocalDate = () => {
@@ -28,14 +28,18 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
     const { categories, loadData } = useTransactions()
     const [formData, setFormData] = useState<Transaction>(INITIAL_VALUE);
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        newTransaction(formData)
-        loadData()
-        onClose();
+        try {
+            await createTransaction(formData);
+            await loadData();
+            onClose();
+        } catch (error) {
+            console.error(error);
+        }   
     };
 
-    const handleChange = (e: any) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,

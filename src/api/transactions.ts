@@ -46,18 +46,16 @@ export async function getAllCategories(filters = {}): Promise<DataOptions[]> {
   return res.json();
 }
 
-export async function newTransaction(newItem : Transaction) {
+export async function createTransaction(newItem: Transaction) {
   try {
-    const response = await fetch(`${API_URL}/api/transactions`, {
+    await fetch(`${API_URL}/api/transactions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newItem),
     });
-    const data = await response.json();
-    console.log(data);
-  } catch (error) { 
-    console.error("Error:", error);
+  } catch (error) {
+    throw new Error(`Error adding transition ${error}`);
   }
 }
