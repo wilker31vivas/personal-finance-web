@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { getTransactions } from '../api/transactions'
-import type { Transaction, Filters, UpdateFilterType } from "../types/types"
+import { getTransactions, getCategories } from '../api/transactions'
+import type { Transaction, Filters, UpdateFilterType, Category } from "../types/types"
 
 type TransactionsContextType = {
     transactionPages: Transaction[][]
@@ -12,6 +12,8 @@ type TransactionsContextType = {
     setFilters: (value: React.SetStateAction<Filters>) => void
     pageCurrent: number
     setPageCurrent: React.Dispatch<React.SetStateAction<number>>
+    categories: Category[] | null
+    loadData(): Promise<void>
 }
 
 export const TransactionsContext = createContext<TransactionsContextType | null>(null)
@@ -24,6 +26,7 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS)
     const [pageCurrent, setPageCurrent] = useState(0)
+    const [categories, setCategories] = useState<Category[] | null>(null)
 
     const resetFilters = () => {
         setFilters(INITIAL_FILTERS)
@@ -45,37 +48,42 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
         return result;
     }
 
-    useEffect(() => {
-        let cancelled = false;
+    async function loadData() {
+        setLoading(true)
+        setError(null)
+        try {
+            const t = await getTransactions(filters)
+            const tPages = chunkArray(t, 5)
+            setTransactionsPages(tPages);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error loading transactions')
+        }
+        finally {
+            setLoading(false)
+        }
+    }
 
-        async function loadData() {
-            setLoading(true)
-            setError(null)
+    useEffect(() => {
+        loadData()
+    }, [filters])
+
+    useEffect(() => {
+        const fetchCategories = async () => {
             try {
-                const t = await getTransactions(filters)
-                if (!cancelled) {
-                    const tPages = chunkArray(t, 5)
-                    setTransactionsPages(tPages);
-                }
+                const res = await getCategories()
+                setCategories(res)
             } catch (err) {
-                if (!cancelled) {
-                    setError(err instanceof Error ? err.message : 'Error loading transactions')
-                }
-            } finally {
-                if (!cancelled) setLoading(false)
+                setError(`Error loading categories: ${err}`)
             }
         }
 
-        loadData()
+        fetchCategories()
+    }, [])
 
-        return () => {
-            cancelled = true;
-        };
-    }, [filters])
 
     return (
         <TransactionsContext.Provider value={{
-            transactionPages, error, loading, filters, updateFilter, resetFilters, setFilters, pageCurrent, setPageCurrent
+            transactionPages, error, loading, filters, updateFilter, resetFilters, setFilters, pageCurrent, setPageCurrent, categories, loadData
         }}>
             {children}
         </TransactionsContext.Provider>

@@ -82,7 +82,7 @@ export default function TransactionsTable() {
                                                 </svg>
                                             </div>
                                             <span className="text-sm font-medium text-text dark:text-gray-200">
-                                                {new Date(item.date).toLocaleDateString('pt-BR')}
+                                                {new Date(item.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
                                             </span>
                                         </div>
                                     </td>

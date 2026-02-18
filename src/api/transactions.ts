@@ -3,7 +3,7 @@ import type {
   Balance,
   Transaction,
   Category,
-  DataOptions
+  DataOptions,
 } from "../types/types";
 
 export async function getTransactions(filters = {}): Promise<Transaction[]> {
@@ -44,4 +44,18 @@ export async function getAllCategories(filters = {}): Promise<DataOptions[]> {
   const res = await fetch(`${API_URL}/api/stats/by-category?${params}`);
   if (!res.ok) throw new Error(`Error fetching categories ${res.status}`);
   return res.json();
+}
+
+export async function createTransaction(newItem: Transaction) {
+  try {
+    await fetch(`${API_URL}/api/transactions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newItem),
+    });
+  } catch (error) {
+    throw new Error(`Error adding transition ${error}`);
+  }
 }
