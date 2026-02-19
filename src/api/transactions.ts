@@ -59,3 +59,17 @@ export async function createTransaction(newItem: Transaction) {
     throw new Error(`Error adding transition ${error}`);
   }
 }
+
+export async function updateTransaction(item: Transaction) {
+   try {
+    await fetch(`${API_URL}/api/transactions/${item.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(item),
+    });
+  } catch (error) {
+    throw new Error(`Error editing transition ${error}`);
+  }
+}

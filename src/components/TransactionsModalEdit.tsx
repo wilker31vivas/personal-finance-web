@@ -1,33 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTransactions } from '../context/TransactionsContext';
-import { createTransaction } from '../api/transactions'
+import { updateTransaction } from '../api/transactions'
 import type { Transaction } from '../types/types';
 import { WarningState } from './Message';
-
-const getTodayLocalDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
-
-const INITIAL_VALUE: Transaction = {
-    description: '',
-    amount: 0,
-    type: 'expense',
-    category: 'Food',
-    date: getTodayLocalDate()
-}
 
 interface TransactionModalProps {
     isOpen: boolean,
     onClose: () => void
+    formData: Transaction
+    setFormData: React.Dispatch<React.SetStateAction<Transaction>>
 }
 
-export default function TransactionModal({ isOpen, onClose }: TransactionModalProps) {
+export default function TransactionModalEdit({ isOpen, onClose, formData, setFormData }: TransactionModalProps) {
     const { categories, loadData } = useTransactions()
-    const [formData, setFormData] = useState<Transaction>(INITIAL_VALUE);
     const [error, setError] = useState<null | string>(null)
 
     const validate = (data: typeof formData): string | null => {
@@ -38,7 +23,6 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
 
     const reset = () => {
         setError(null)
-        setFormData(INITIAL_VALUE)
         onClose();
     }
 
@@ -53,7 +37,7 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
 
         try {
             console.log(formData)
-            await createTransaction(formData);
+            await updateTransaction(formData);
             await loadData();
             reset()
         } catch (error) {
@@ -79,11 +63,11 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
             <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
-                        New Transaction
+                        Edit Transaction
                     </h2>
                     <button
                         onClick={reset}
-                        className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         aria-label="Close modal"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -180,15 +164,15 @@ export default function TransactionModal({ isOpen, onClose }: TransactionModalPr
                         <button
                             type="button"
                             onClick={reset}
-                            className="cursor-pointer flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                            className="flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="cursor-pointer flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-marguerite-500 to-blue-marguerite-600 hover:from-blue-marguerite-600 hover:to-blue-marguerite-700 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                            className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-marguerite-500 to-blue-marguerite-600 hover:from-blue-marguerite-600 hover:to-blue-marguerite-700 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                         >
-                            Create
+                            Save
                         </button>
                     </div>
                 </form>
