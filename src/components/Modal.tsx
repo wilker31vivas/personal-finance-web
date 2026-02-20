@@ -282,14 +282,14 @@ export function ModalDelete({ isOpen, onClose, transaction }: ModalCreateAndDele
 
                 <div className="p-6 space-y-4">
                     <div className="flex justify-center">
-                        <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-18 h-18 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                             </svg>
                         </div>
                     </div>
 
-                    <p className="text-center text-text dark:text-slate-300 text-sm">
+                    <p className="text-center text-text dark:text-slate-300 text-md">
                         Are you sure you want to delete the transaction{' '}
                         <span className="font-semibold text-text dark:text-white">"{transaction?.description}"</span>?
                         This action cannot be undone.

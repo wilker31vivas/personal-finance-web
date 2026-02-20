@@ -1,7 +1,6 @@
 export default function getPagination(current: number, total: number) {
     const delta = 1 // cuántas páginas mostrar a cada lado
     const range: (number | string)[] = []
-    const rangeWithDots: (number | string)[] = []
 
     const left = Math.max(2, current - delta)
     const right = Math.min(total - 1, current + delta)

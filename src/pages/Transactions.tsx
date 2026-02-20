@@ -44,7 +44,6 @@ export default function Transactions() {
                     </button>
                 </div>
 
-                {/* Filters Card */}
                 <FilterSection />
 
                 {error ? (
