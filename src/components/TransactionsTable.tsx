@@ -5,7 +5,7 @@ import EmptyState from './EmptyState'
 import { useMemo, useCallback, useState } from 'react';
 import getPagination from '../utils/getPagination'
 import type { Transaction } from '../types/types'
-import TransactionModalEdit from './TransactionsModalEdit'
+import { ModalEdit, ModalDelete } from './Modal'
 
 const INITIAL_VALUE: Transaction = {
     id: undefined,
@@ -18,7 +18,8 @@ const INITIAL_VALUE: Transaction = {
 
 export default function TransactionsTable() {
     const { loading, transactionPages, setFilters, pageCurrent, setPageCurrent } = useTransactions()
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+    const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [formData, setFormData] = useState<Transaction>(INITIAL_VALUE);
 
 
@@ -117,7 +118,7 @@ export default function TransactionsTable() {
                                         <div className='flex gap-2 justify-start items-center'>
                                             <button
                                                 onClick={() => {
-                                                    setIsModalOpen(true);
+                                                    setIsModalEditOpen(true);
                                                     setFormData({
                                                         id: item.id,
                                                         description: item.description,
@@ -134,6 +135,17 @@ export default function TransactionsTable() {
                                                 </svg>
                                             </button>
                                             <button
+                                                onClick={() => {
+                                                    setIsModalDeleteOpen(true);
+                                                    setFormData({
+                                                        id: item.id,
+                                                        description: item.description,
+                                                        amount: item.amount,
+                                                        type: item.type,
+                                                        category: item.category,
+                                                        date: item.date
+                                                    })
+                                                }}
                                                 className="cursor-pointer group/btn flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-950/30 hover:bg-red-500 dark:hover:bg-red-600 text-red-700 dark:text-red-400 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-red-200 dark:border-red-900 hover:border-red-500 dark:hover:border-red-600"
                                             >
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -200,11 +212,16 @@ export default function TransactionsTable() {
                     </div>
                 )}
 
-                <TransactionModalEdit
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
+                <ModalEdit
+                    isOpen={isModalEditOpen}
+                    onClose={() => setIsModalEditOpen(false)}
                     formData={formData}
                     setFormData={setFormData}
+                />
+                <ModalDelete
+                    isOpen={isModalDeleteOpen}
+                    onClose={() => setIsModalDeleteOpen(false)}
+                    transaction={formData}
                 />
             </div>
         </div>

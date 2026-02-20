@@ -61,7 +61,7 @@ export async function createTransaction(newItem: Transaction) {
 }
 
 export async function updateTransaction(item: Transaction) {
-   try {
+  try {
     await fetch(`${API_URL}/api/transactions/${item.id}`, {
       method: "PATCH",
       headers: {
@@ -71,5 +71,15 @@ export async function updateTransaction(item: Transaction) {
     });
   } catch (error) {
     throw new Error(`Error editing transition ${error}`);
+  }
+}
+
+export async function deleteTransaction(item: string) {
+  try {
+    await fetch(`${API_URL}/api/transactions/${item}`, {
+      method: "DELETE",
+    });
+  } catch (error) {
+    throw new Error(`Error delete transition ${error}`);
   }
 }

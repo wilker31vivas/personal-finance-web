@@ -3,7 +3,7 @@ import { ErrorState } from '../components/Message';
 import { FilterByYear, FilterByCategory, FilterByMonth, FilterByType, FilterButton } from '../components/Filters'
 import TransactionsTable from '../components/TransactionsTable'
 import { useTransactions, INITIAL_FILTERS } from '../context/TransactionsContext';
-import TransactionModal from '../components/TransactionModal'
+import { ModalCreate } from '../components/Modal'
 
 function FilterSection() {
     const { filters, updateFilter, resetFilters } = useTransactions()
@@ -56,7 +56,7 @@ export default function Transactions() {
                 )}
             </div>
 
-            <TransactionModal
+            <ModalCreate
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
             />
