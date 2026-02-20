@@ -2,11 +2,26 @@ import Loader from './Loader'
 import { formatCurrency } from '../utils/formatCurrency'
 import { useTransactions, INITIAL_FILTERS } from '../context/TransactionsContext';
 import EmptyState from './EmptyState'
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import getPagination from '../utils/getPagination'
+import type { Transaction } from '../types/types'
+import { ModalEdit, ModalDelete } from './Modal'
+
+const INITIAL_VALUE: Transaction = {
+    id: undefined,
+    description: '',
+    amount: 0,
+    type: 'expense',
+    category: '',
+    date: ''
+}
 
 export default function TransactionsTable() {
     const { loading, transactionPages, setFilters, pageCurrent, setPageCurrent } = useTransactions()
+    const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+    const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+    const [formData, setFormData] = useState<Transaction>(INITIAL_VALUE);
+
 
     const totalPages = transactionPages.length
     const pagesToShow = useMemo(() => {
@@ -102,6 +117,17 @@ export default function TransactionsTable() {
                                     <td className="py-4 px-6">
                                         <div className='flex gap-2 justify-start items-center'>
                                             <button
+                                                onClick={() => {
+                                                    setIsModalEditOpen(true);
+                                                    setFormData({
+                                                        id: item.id,
+                                                        description: item.description,
+                                                        amount: item.amount,
+                                                        type: item.type,
+                                                        category: item.category,
+                                                        date: item.date
+                                                    })
+                                                }}
                                                 className="cursor-pointer group/btn flex items-center gap-2 px-4 py-2.5 bg-blue-marguerite-50 dark:bg-blue-marguerite-950/30 hover:bg-blue-marguerite-500 dark:hover:bg-blue-marguerite-600 text-blue-marguerite-700 dark:text-blue-marguerite-300 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-blue-marguerite-200 dark:border-blue-marguerite-800 hover:border-blue-marguerite-500 dark:hover:border-blue-marguerite-600"
                                             >
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,6 +135,17 @@ export default function TransactionsTable() {
                                                 </svg>
                                             </button>
                                             <button
+                                                onClick={() => {
+                                                    setIsModalDeleteOpen(true);
+                                                    setFormData({
+                                                        id: item.id,
+                                                        description: item.description,
+                                                        amount: item.amount,
+                                                        type: item.type,
+                                                        category: item.category,
+                                                        date: item.date
+                                                    })
+                                                }}
                                                 className="cursor-pointer group/btn flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-950/30 hover:bg-red-500 dark:hover:bg-red-600 text-red-700 dark:text-red-400 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-red-200 dark:border-red-900 hover:border-red-500 dark:hover:border-red-600"
                                             >
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,6 +211,18 @@ export default function TransactionsTable() {
                         </div>
                     </div>
                 )}
+
+                <ModalEdit
+                    isOpen={isModalEditOpen}
+                    onClose={() => setIsModalEditOpen(false)}
+                    formData={formData}
+                    setFormData={setFormData}
+                />
+                <ModalDelete
+                    isOpen={isModalDeleteOpen}
+                    onClose={() => setIsModalDeleteOpen(false)}
+                    transaction={formData}
+                />
             </div>
         </div>
     )
