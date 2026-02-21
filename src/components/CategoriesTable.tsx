@@ -3,22 +3,23 @@ import EmptyState from "./EmptyState";
 import type { Category } from "../types/types";
 import { useState } from "react";
 import { ErrorState } from "./Message";
+import { ModalDeleteCategory } from '../components/Modal'
 
 type CategoriesTableProps = {
     loading: boolean
     categories: Category[]
-    setCategories: React.Dispatch<React.SetStateAction<Category[]>>
+    loadCategories: () => Promise<void>
 }
 
-export default function CategoriesTable({ loading, categories, setCategories }: CategoriesTableProps) {
-    const [editingId, setEditingId] = useState<number | null>(null);
-    const [editingName, setEditingName] = useState('');
+export default function CategoriesTable({ loading, categories, loadCategories }: CategoriesTableProps) {
+    const [category, setCategory] = useState<Category>({
+        id: 0, name: ''
+    });
     const [editError, setEditError] = useState<string | null>(null);
-
+    const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
 
     const handleStartEdit = (category: Category) => {
-        setEditingId(category.id);
-        setEditingName(category.name);
+        setCategory({ id: category.id, name: category.name });
     };
 
     const handleSaveEdit = async (categoryId: number) => {
@@ -26,25 +27,16 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
 
             //Hacer fetch PUT categories ...
 
-            // Guardar temporalmente la categoria
-            setCategories((prev) =>
-                prev.map((category) =>
-                    category.id === categoryId
-                        ? { ...category, name: editingName }
-                        : category
-                )
-            );
-
-            setEditingId(null);
-            setEditingName('');
+            // setEditingId(null);
+            // setEditingName('');
         } catch (error) {
             setEditError(error instanceof Error ? error.message : "Error updating category");
         }
     };
 
     const handleCancelEdit = () => {
-        setEditingId(null);
-        setEditingName('');
+        // setEditingId(null);
+        // setEditingName('');
     };
 
     return (
@@ -89,11 +81,11 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-2.5 h-2.5 rounded-full bg-blue-marguerite-600 dark:bg-blue-marguerite-400 opacity-70 group-hover:opacity-100 transition" />
-                                            {editingId === item.id ? (
+                                            {/* {category.id === item.id ? (
                                                 <input
                                                     type="text"
-                                                    value={editingName}
-                                                    onChange={(e) => setEditingName(e.target.value)}
+                                                    value={category.name}
+                                                    onChange={(e) => setCategory({ name: e.target.value, id: item.id })}
                                                     onBlur={() => handleSaveEdit(item.id)}
                                                     onKeyDown={(e) => {
                                                         if (e.key === 'Enter') handleSaveEdit(item.id);
@@ -102,11 +94,11 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
                                                     autoFocus
                                                     className="text-sm font-semibold text-gray-800 dark:text-gray-200 dark:bg-slate-800 border-2 border-blue-marguerite-500 dark:border-blue-marguerite-600 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-marguerite-300 dark:focus:ring-blue-marguerite-700"
                                                 />
-                                            ) : (
+                                            ) : ( */}
                                                 <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-blue-marguerite-700 dark:group-hover:text-blue-marguerite-400 transition-colors duration-200">
                                                     {item.name}
                                                 </span>
-                                            )}
+                                            {/* )} */}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -122,7 +114,7 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
                                                 <span className="text-sm">Edit</span>
                                             </button>
                                             <button
-                                                onClick={() => alert(`Category ${item.name} deleted`)}
+                                                onClick={() => handleStartEdit(item)}
                                                 className="group/btn flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-950/30 hover:bg-red-500 dark:hover:bg-red-600 text-red-700 dark:text-red-400 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-red-200 dark:border-red-900 hover:border-red-500 dark:hover:border-red-600"
                                                 aria-label={`Delete ${item.name}`}
                                             >
@@ -139,6 +131,8 @@ export default function CategoriesTable({ loading, categories, setCategories }: 
                     </tbody>
                 </table>
             </div>
+            <ModalDeleteCategory fetchCategoriesdData={loadCategories} isOpen={isModalDeleteOpen} onClose={() => setIsModalDeleteOpen(false)} category={category}
+            ></ModalDeleteCategory>
         </div>
     );
 }

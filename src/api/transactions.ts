@@ -97,3 +97,13 @@ export async function createCategory(newItem: Category) {
     throw new Error(`Error adding category ${error}`);
   }
 }
+
+export async function deleteCategory(item: string) {
+  try {
+    await fetch(`${API_URL}/api/category/${item}`, {
+      method: "DELETE",
+    });
+  } catch (error) {
+    throw new Error(`Error delete category ${error}`);
+  }
+}

@@ -28,7 +28,6 @@ export default function Categories() {
 
     return (
         <div className="p-8 max-w-7xl mx-auto">
-            {/* Header */}
             <div className="flex flex-col justify-between items-center gap-4 mb-8 sm:flex-row text-center">
                 <div>
                     <h1 className="text-3xl sm:text-4xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
@@ -44,7 +43,7 @@ export default function Categories() {
             {error ? (
                 <ErrorState title={error} onRetry={fetchCategoriesData}></ErrorState>
             ) :
-                <CategoriesTable loading={loading} categories={categories} setCategories={setCategories}></CategoriesTable>
+                <CategoriesTable loading={loading} categories={categories} loadCategories={fetchCategoriesData}></CategoriesTable>
             }
         </div>
     )
