@@ -83,3 +83,17 @@ export async function deleteTransaction(item: string) {
     throw new Error(`Error delete transition ${error}`);
   }
 }
+
+export async function createCategory(newItem: Category) {
+  try {
+    await fetch(`${API_URL}/api/categories`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newItem),
+    });
+  } catch (error) {
+    throw new Error(`Error adding category ${error}`);
+  }
+}
