@@ -1,30 +1,6 @@
-import { useEffect, useState } from "react"
-import { ErrorState } from "../components/Message"
 import CategoriesTable from "../components/CategoriesTable"
-import { getCategories } from "../api/transactions";
-import type { Category } from "../types/types";
 
 export default function Categories() {
-    const [error, setError] = useState<string | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [categories, setCategories] = useState<Category[]>([])
-
-    async function fetchCategoriesData() {
-        setLoading(true);
-
-        try {
-            const c = await getCategories();
-            setCategories(c)
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "Error loading categories data");
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        fetchCategoriesData()
-    }, [])
 
     return (
         <div className="p-8 max-w-7xl mx-auto">
@@ -40,11 +16,7 @@ export default function Categories() {
                 </button>
             </div>
 
-            {error ? (
-                <ErrorState title={error} onRetry={fetchCategoriesData}></ErrorState>
-            ) :
-                <CategoriesTable loading={loading} categories={categories} loadCategories={fetchCategoriesData}></CategoriesTable>
-            }
+            <CategoriesTable></CategoriesTable>
         </div>
     )
 }

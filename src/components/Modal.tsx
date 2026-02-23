@@ -7,7 +7,7 @@ import { WarningState } from './Message';
 interface ModalProps {
     isOpen: boolean,
     onClose: () => void
-    action(item: Transaction): Promise<void>
+    action(newItem: Transaction): Promise<Transaction>
     title: 'Edit' | 'Create'
     formData: Transaction
     setFormData: React.Dispatch<React.SetStateAction<Transaction>>
@@ -321,8 +321,14 @@ export function ModalDelete({ isOpen, onClose, transaction }: ModalCreateAndDele
     );
 }
 
+interface ModalDeleteCategoryProps {
+    isOpen: boolean,
+    onClose: () => void
+    category: Category
+    loadData: () => Promise<void>
+}
 
-export function ModalDeleteCategory({ fetchCategoriesdData, isOpen, onClose, category }) {
+export function ModalDeleteCategory({ isOpen, onClose, category, loadData }: ModalDeleteCategoryProps) {
     const [error, setError] = useState<null | string>(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -335,11 +341,11 @@ export function ModalDeleteCategory({ fetchCategoriesdData, isOpen, onClose, cat
             if (category?.id) {
                 setIsLoading(true);
                 await deleteCategory(category?.id);
-                await fetchCategoriesdData();
+                await loadData();
                 onClose();
             }
-        } catch {
-            setError('An error occurred while deleting. Please try again.');
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'An error occurred while deleting.');
         } finally {
             setIsLoading(false);
         }

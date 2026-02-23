@@ -1,43 +1,36 @@
 import Loader from "./Loader"
 import EmptyState from "./EmptyState";
 import type { Category } from "../types/types";
-import { useState } from "react";
-import { ErrorState } from "./Message";
+import { useState, useEffect } from "react";
 import { ModalDeleteCategory } from '../components/Modal'
+import { ErrorState } from "./Message";
+import { getCategories } from "../api/transactions";
 
-type CategoriesTableProps = {
-    loading: boolean
-    categories: Category[]
-    loadCategories: () => Promise<void>
-}
-
-export default function CategoriesTable({ loading, categories, loadCategories }: CategoriesTableProps) {
-    const [category, setCategory] = useState<Category>({
-        id: 0, name: ''
-    });
-    const [editError, setEditError] = useState<string | null>(null);
+export default function CategoriesTable() {
+    const [category, setCategory] = useState<Category>({ id: "0", name: '' });
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
-    const handleStartEdit = (category: Category) => {
-        setCategory({ id: category.id, name: category.name });
-    };
+    async function fetchCategoriesData() {
+        setLoading(true);
 
-    const handleSaveEdit = async (categoryId: number) => {
         try {
-
-            //Hacer fetch PUT categories ...
-
-            // setEditingId(null);
-            // setEditingName('');
-        } catch (error) {
-            setEditError(error instanceof Error ? error.message : "Error updating category");
+            const c = await getCategories();
+            setCategories(c)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Error loading categories data");
+        } finally {
+            setLoading(false);
         }
-    };
+    }
 
-    const handleCancelEdit = () => {
-        // setEditingId(null);
-        // setEditingName('');
-    };
+    useEffect(() => {
+        fetchCategoriesData()
+    }, [])
+
+    if (error) return <ErrorState title={error} onRetry={fetchCategoriesData}></ErrorState>
 
     return (
         <div className="bg-white dark:bg-surface-dark rounded-2xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-lg dark:shadow-slate-900/50">
@@ -54,7 +47,6 @@ export default function CategoriesTable({ loading, categories, loadCategories }:
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
-                        {editError && <ErrorState title={editError} />}
                         {loading ? (
                             <tr>
                                 <td colSpan={2} className="py-8">
@@ -81,30 +73,15 @@ export default function CategoriesTable({ loading, categories, loadCategories }:
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-2.5 h-2.5 rounded-full bg-blue-marguerite-600 dark:bg-blue-marguerite-400 opacity-70 group-hover:opacity-100 transition" />
-                                            {/* {category.id === item.id ? (
-                                                <input
-                                                    type="text"
-                                                    value={category.name}
-                                                    onChange={(e) => setCategory({ name: e.target.value, id: item.id })}
-                                                    onBlur={() => handleSaveEdit(item.id)}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter') handleSaveEdit(item.id);
-                                                        if (e.key === 'Escape') handleCancelEdit();
-                                                    }}
-                                                    autoFocus
-                                                    className="text-sm font-semibold text-gray-800 dark:text-gray-200 dark:bg-slate-800 border-2 border-blue-marguerite-500 dark:border-blue-marguerite-600 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-marguerite-300 dark:focus:ring-blue-marguerite-700"
-                                                />
-                                            ) : ( */}
-                                                <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-blue-marguerite-700 dark:group-hover:text-blue-marguerite-400 transition-colors duration-200">
-                                                    {item.name}
-                                                </span>
-                                            {/* )} */}
+                                            <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-blue-marguerite-700 dark:group-hover:text-blue-marguerite-400 transition-colors duration-200">
+                                                {item.name}
+                                            </span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex gap-2 justify-end items-center">
                                             <button
-                                                onClick={() => handleStartEdit(item)}
+                                                onClick={() => console.log('edit')}
                                                 className="group/btn flex items-center gap-2 px-4 py-2.5 bg-blue-marguerite-50 dark:bg-blue-marguerite-950/30 hover:bg-blue-marguerite-500 dark:hover:bg-blue-marguerite-600 text-blue-marguerite-700 dark:text-blue-marguerite-300 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-blue-marguerite-200 dark:border-blue-marguerite-800 hover:border-blue-marguerite-500 dark:hover:border-blue-marguerite-600"
                                                 aria-label={`Edit ${item.name}`}
                                             >
@@ -114,7 +91,10 @@ export default function CategoriesTable({ loading, categories, loadCategories }:
                                                 <span className="text-sm">Edit</span>
                                             </button>
                                             <button
-                                                onClick={() => handleStartEdit(item)}
+                                                onClick={() => {
+                                                    setCategory({ id: item.id, name: item.name });
+                                                    setIsModalDeleteOpen(true)
+                                                }}
                                                 className="group/btn flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-950/30 hover:bg-red-500 dark:hover:bg-red-600 text-red-700 dark:text-red-400 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-red-200 dark:border-red-900 hover:border-red-500 dark:hover:border-red-600"
                                                 aria-label={`Delete ${item.name}`}
                                             >
@@ -131,8 +111,7 @@ export default function CategoriesTable({ loading, categories, loadCategories }:
                     </tbody>
                 </table>
             </div>
-            <ModalDeleteCategory fetchCategoriesdData={loadCategories} isOpen={isModalDeleteOpen} onClose={() => setIsModalDeleteOpen(false)} category={category}
-            ></ModalDeleteCategory>
+            <ModalDeleteCategory loadData={fetchCategoriesData} isOpen={isModalDeleteOpen} onClose={() => setIsModalDeleteOpen(false)} category={category}></ModalDeleteCategory>
         </div>
     );
 }

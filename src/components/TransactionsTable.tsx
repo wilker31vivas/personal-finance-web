@@ -22,7 +22,6 @@ export default function TransactionsTable() {
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [formData, setFormData] = useState<Transaction>(INITIAL_VALUE);
 
-
     const totalPages = transactionPages.length
     const pagesToShow = useMemo(() => {
         return getPagination(pageCurrent + 1, totalPages)
