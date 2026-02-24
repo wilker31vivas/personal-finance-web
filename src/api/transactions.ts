@@ -97,6 +97,25 @@ export async function deleteTransaction(id: string): Promise<void> {
   }
 }
 
+export async function createCategory( newItem: Category ): Promise<Category> {
+  const response = await fetch(`${API_URL}/api/categories`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newItem),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(
+      data.message ?? `Error adding category (${response.status})`,
+    );
+  }
+
+  return response.json();
+}
+
 export async function deleteCategory(id: string): Promise<void> {
   const response = await fetch(`${API_URL}/api/categories/${id}`, {
     method: "DELETE",

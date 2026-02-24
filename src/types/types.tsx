@@ -21,7 +21,7 @@ export interface Balance {
 }
 
 export type Transaction = {
-    id?: string
+    id: string
     type: "income" | "expense"
     category: string
     description: string

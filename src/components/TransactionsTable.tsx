@@ -8,7 +8,7 @@ import type { Transaction } from '../types/types'
 import { ModalEdit, ModalDelete } from './Modal'
 
 const INITIAL_VALUE: Transaction = {
-    id: undefined,
+    id: "",
     description: '',
     amount: 0,
     type: 'expense',
@@ -17,7 +17,7 @@ const INITIAL_VALUE: Transaction = {
 }
 
 export default function TransactionsTable() {
-    const { loading, transactionPages, setFilters, pageCurrent, setPageCurrent } = useTransactions()
+    const { loading, transactionPages, setFilters, pageCurrent, setPageCurrent, loadData } = useTransactions()
     const [isModalEditOpen, setIsModalEditOpen] = useState(false);
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [formData, setFormData] = useState<Transaction>(INITIAL_VALUE);
@@ -218,9 +218,11 @@ export default function TransactionsTable() {
                     setFormData={setFormData}
                 />
                 <ModalDelete
+                    loadData={loadData}
+                    typeModal='transaction'
                     isOpen={isModalDeleteOpen}
                     onClose={() => setIsModalDeleteOpen(false)}
-                    transaction={formData}
+                    item={{ id: formData.id, description: formData.description }}
                 />
             </div>
         </div>

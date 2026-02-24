@@ -2,7 +2,7 @@ import Loader from "./Loader"
 import EmptyState from "./EmptyState";
 import type { Category } from "../types/types";
 import { useState, useEffect } from "react";
-import { ModalDeleteCategory } from '../components/Modal'
+import { ModalDelete } from '../components/Modal'
 import { ErrorState } from "./Message";
 import { getCategories } from "../api/transactions";
 
@@ -111,7 +111,7 @@ export default function CategoriesTable() {
                     </tbody>
                 </table>
             </div>
-            <ModalDeleteCategory loadData={fetchCategoriesData} isOpen={isModalDeleteOpen} onClose={() => setIsModalDeleteOpen(false)} category={category}></ModalDeleteCategory>
+            <ModalDelete typeModal="category" loadData={fetchCategoriesData} isOpen={isModalDeleteOpen} onClose={() => setIsModalDeleteOpen(false)} item={category}></ModalDelete>
         </div>
     );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTransactions } from '../context/TransactionsContext';
-import { updateTransaction, createTransaction, deleteTransaction, deleteCategory } from '../api/transactions'
+import { updateTransaction, createTransaction, deleteTransaction, deleteCategory, getCategories, createCategory } from '../api/transactions'
 import type { Transaction, Category } from '../types/types';
 import { WarningState } from './Message';
 
@@ -11,6 +11,13 @@ interface ModalProps {
     title: 'Edit' | 'Create'
     formData: Transaction
     setFormData: React.Dispatch<React.SetStateAction<Transaction>>
+}
+
+interface ModalCategoryProps {
+    isOpen: boolean,
+    onClose: () => void
+    title: 'Edit' | 'Create'
+    formData: Category
 }
 
 interface ModalEditProps {
@@ -26,15 +33,33 @@ interface ModalCreateAndDeleteProps {
     transaction?: Transaction
 }
 
-const getInitialTransaction = (): Transaction => {
-    const getTodayLocalDate = () => {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
+interface ModalCreateAndDeleteProps {
+    isOpen: boolean,
+    onClose: () => void
+    transaction?: Transaction
+}
 
+type ModalDeleteProps = {
+    isOpen: boolean,
+    onClose: () => void,
+    item: {
+        id: string
+        name?: string
+        description?: string
+    }
+    typeModal: 'transaction' | 'category'
+    loadData: () => Promise<void>
+}
+
+const getTodayLocalDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+const getInitialTransaction = (): Transaction => {
     return {
         description: '',
         amount: 0,
@@ -84,7 +109,7 @@ function Modal({ isOpen, onClose, action, title, formData, setFormData }: ModalP
             await loadData();
             reset()
         } catch (error) {
-            setError('An error occurred while saving. Please try again.');
+            setError(error instanceof Error ? error.message : 'An error occurred while saving. Please try again.');
         }
     };
 
@@ -234,25 +259,25 @@ export function ModalCreate({ isOpen, onClose }: ModalCreateAndDeleteProps) {
 
 }
 
-export function ModalDelete({ isOpen, onClose, transaction }: ModalCreateAndDeleteProps) {
-    const { loadData } = useTransactions();
+export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: ModalDeleteProps) {
     const [error, setError] = useState<null | string>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        if (isOpen) setError(null);
-    }, [isOpen]);
-
     const handleConfirm = async () => {
+        if (!item?.id) return;
+        setIsLoading(true);
+
         try {
-            if (transaction?.id) {
-                setIsLoading(true);
-                await deleteTransaction(transaction?.id);
-                await loadData();
-                onClose();
+            if (typeModal === 'transaction') {
+                await deleteTransaction(item.id);
+            } else {
+                await deleteCategory(item.id);
             }
-        } catch {
-            setError('An error occurred while deleting. Please try again.');
+            await loadData();
+            onClose();
+        }
+        catch (error) {
+            setError(error instanceof Error ? error.message : 'An error occurred while deleting. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -263,6 +288,10 @@ export function ModalDelete({ isOpen, onClose, transaction }: ModalCreateAndDele
         onClose();
     };
 
+    useEffect(() => {
+        if (isOpen) setError(null);
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     return (
@@ -271,7 +300,7 @@ export function ModalDelete({ isOpen, onClose, transaction }: ModalCreateAndDele
 
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
-                        Delete Transaction
+                        Delete {typeModal === 'transaction' ? "Transaction" : 'Category'}
                     </h2>
                     <button onClick={handleCancel} className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors" aria-label="Close modal">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -290,8 +319,8 @@ export function ModalDelete({ isOpen, onClose, transaction }: ModalCreateAndDele
                     </div>
 
                     <p className="text-center text-text dark:text-slate-300 text-md">
-                        Are you sure you want to delete the transaction{' '}
-                        <span className="font-semibold text-text dark:text-white">"{transaction?.description}"</span>?
+                        Are you sure you want to delete the {typeModal === 'transaction' ? "Transaction" : 'Category'} {' '}
+                        <span className="font-semibold text-text dark:text-white">"{typeModal === 'transaction' ? item.description : item.name}"</span>?
                         This action cannot be undone.
                     </p>
 
@@ -321,95 +350,79 @@ export function ModalDelete({ isOpen, onClose, transaction }: ModalCreateAndDele
     );
 }
 
-interface ModalDeleteCategoryProps {
-    isOpen: boolean,
-    onClose: () => void
-    category: Category
-    loadData: () => Promise<void>
-}
+// MODAL FOR CATEGORY
 
-export function ModalDeleteCategory({ isOpen, onClose, category, loadData }: ModalDeleteCategoryProps) {
-    const [error, setError] = useState<null | string>(null);
-    const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        if (isOpen) setError(null);
-    }, [isOpen]);
-
-    const handleConfirm = async () => {
-        try {
-            if (category?.id) {
-                setIsLoading(true);
-                await deleteCategory(category?.id);
-                await loadData();
-                onClose();
-            }
-        } catch (error) {
-            setError(error instanceof Error ? error.message : 'An error occurred while deleting.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleCancel = () => {
-        setError(null);
+export function ModalCategory({ isOpen, onClose, title, formData }: ModalCategoryProps) {
+    const reset = () => {
         onClose();
+    }
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        reset()
     };
 
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
-            <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-sm transform transition-all">
-
+            <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
-                        Delete Category
+                    <h2 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
+                        {title} Category
                     </h2>
-                    <button onClick={handleCancel} className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors" aria-label="Close modal">
+                    <button
+                        onClick={reset}
+                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                        aria-label="Close modal"
+                    >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
 
-                <div className="p-6 space-y-4">
-                    <div className="flex justify-center">
-                        <div className="w-18 h-18 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                            </svg>
-                        </div>
+                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                    <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-text dark:text-slate-300 mb-2">
+                            Name
+                        </label>
+                        <input
+                            type="text"
+                            id="description"
+                            name="description"
+                            value={formData.name}
+                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-marguerite-500 focus:border-transparent outline-none transition-all text-text dark:text-white"
+                            placeholder="Enter description..."
+                        />
                     </div>
 
-                    <p className="text-center text-text dark:text-slate-300 text-md">
-                        Are you sure you want to delete the category{' '}
-                        <span className="font-semibold text-text dark:text-white">"{category?.name}"</span>?
-                        This action cannot be undone.
-                    </p>
-
-                    {error && <WarningState message={error} />}
-
-                    <div className="flex gap-3 pt-2">
+                    <div className="flex gap-3 pt-4">
                         <button
                             type="button"
-                            onClick={handleCancel}
-                            className="cursor-pointer flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                            onClick={reset}
+                            className="flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                         >
                             Cancel
                         </button>
                         <button
-                            type="button"
-                            onClick={handleConfirm}
-                            disabled={isLoading}
-                            className="cursor-pointer flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                            type="submit"
+                            className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-marguerite-500 to-blue-marguerite-600 hover:from-blue-marguerite-600 hover:to-blue-marguerite-700 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                         >
-                            {isLoading ? 'Deleting...' : 'Delete'}
+                            Save
                         </button>
                     </div>
-                </div>
-
+                </form>
             </div>
         </div>
     );
+}
+
+export function ModalCategoryCreate({ isOpen, onClose }: ModalCreateAndDeleteProps) {
+    const formData = {id: '9', name: ''}
+
+    return (
+        <ModalCategory title='Create' formData={formData} isOpen={isOpen} onClose={onClose} ></ModalCategory>
+    )
+
 }
