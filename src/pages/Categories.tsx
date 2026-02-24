@@ -1,8 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CategoriesTable from "../components/CategoriesTable"
+import { ModalCategory } from "../components/Modal";
+import type { Category } from "../types/types";
+import { getCategories } from "../api/transactions";
 
 export default function Categories() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState<Category>({ name: '' })
+    const [categories, setCategories] = useState<Category[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    async function loadData() {
+        setLoading(true);
+
+        try {
+            const c = await getCategories();
+            setCategories(c)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Error loading categories data");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        loadData()
+    }, [])
 
     return (
         <div className="p-8 max-w-7xl mx-auto">
@@ -19,7 +43,8 @@ export default function Categories() {
                 </button>
             </div>
 
-            <CategoriesTable></CategoriesTable>
+            <ModalCategory isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create" formData={formData} setFormData={setFormData} updateData={loadData}></ModalCategory>
+            <CategoriesTable error={error} loading={loading} loadData={loadData} categories={categories}></CategoriesTable>
         </div>
     )
 }

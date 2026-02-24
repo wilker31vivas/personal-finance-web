@@ -46,7 +46,9 @@ export async function getAllCategories(filters = {}): Promise<DataOptions[]> {
   return res.json();
 }
 
-export async function createTransaction( newItem: Transaction ): Promise<Transaction> {
+export async function createTransaction(
+  newItem: Transaction,
+): Promise<Transaction> {
   const response = await fetch(`${API_URL}/api/transactions`, {
     method: "POST",
     headers: {
@@ -65,7 +67,9 @@ export async function createTransaction( newItem: Transaction ): Promise<Transac
   return response.json();
 }
 
-export async function updateTransaction(item: Transaction): Promise<Transaction> {
+export async function updateTransaction(
+  item: Transaction,
+): Promise<Transaction> {
   const response = await fetch(`${API_URL}/api/transactions/${item.id}`, {
     method: "PATCH",
     headers: {
@@ -118,7 +122,7 @@ export async function createCategory(newItem: Category): Promise<Category> {
 
 export async function updateCategory(item: Category): Promise<Category> {
   const response = await fetch(`${API_URL}/api/categories/${item.id}`, {
-    method: "PATCH",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },

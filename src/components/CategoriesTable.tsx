@@ -1,37 +1,23 @@
 import Loader from "./Loader"
 import EmptyState from "./EmptyState";
 import type { Category } from "../types/types";
-import { useState, useEffect } from "react";
-import { ModalDelete } from '../components/Modal'
+import { useState } from "react";
+import { ModalDelete, ModalCategory } from '../components/Modal'
 import { ErrorState } from "./Message";
-import { getCategories } from "../api/transactions";
 
-export default function CategoriesTable() {
-    const [category, setCategory] = useState<Category>({ id: "0", name: '' });
+type CategoriesTable = {
+    error: string | null
+    loading: boolean
+    loadData(): Promise<void>
+    categories: Category[]
+}
+
+export default function CategoriesTable({ error, loading, loadData, categories }: CategoriesTable) {
+    const [category, setCategory] = useState<Category>({ id: "", name: '' });
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [isModalEditOpen, setIsModalEditOpen] = useState(false);
-    const [categories, setCategories] = useState<Category[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
 
-    async function fetchCategoriesData() {
-        setLoading(true);
-
-        try {
-            const c = await getCategories();
-            setCategories(c)
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "Error loading categories data");
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        fetchCategoriesData()
-    }, [])
-
-    if (error) return <ErrorState title={error} onRetry={fetchCategoriesData}></ErrorState>
+    if (error) return <ErrorState title={error} onRetry={loadData}></ErrorState>
 
     return (
         <div className="bg-white dark:bg-surface-dark rounded-2xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-lg dark:shadow-slate-900/50">
@@ -82,7 +68,10 @@ export default function CategoriesTable() {
                                     <td className="px-6 py-4">
                                         <div className="flex gap-2 justify-end items-center">
                                             <button
-                                                onClick={() => console.log('edit')}
+                                                onClick={() => {
+                                                    setCategory({ id: item.id, name: item.name });
+                                                    setIsModalEditOpen(true)
+                                                }}
                                                 className="group/btn flex items-center gap-2 px-4 py-2.5 bg-blue-marguerite-50 dark:bg-blue-marguerite-950/30 hover:bg-blue-marguerite-500 dark:hover:bg-blue-marguerite-600 text-blue-marguerite-700 dark:text-blue-marguerite-300 hover:text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 border border-blue-marguerite-200 dark:border-blue-marguerite-800 hover:border-blue-marguerite-500 dark:hover:border-blue-marguerite-600"
                                                 aria-label={`Edit ${item.name}`}
                                             >
@@ -112,7 +101,8 @@ export default function CategoriesTable() {
                     </tbody>
                 </table>
             </div>
-            <ModalDelete typeModal="category" loadData={fetchCategoriesData} isOpen={isModalDeleteOpen} onClose={() => setIsModalDeleteOpen(false)} item={category}></ModalDelete>
+            <ModalCategory isOpen={isModalEditOpen} onClose={() => setIsModalEditOpen(false)} title="Edit" formData={category} setFormData={setCategory} updateData={loadData}></ModalCategory>
+            <ModalDelete typeModal="category" loadData={loadData} isOpen={isModalDeleteOpen} onClose={() => setIsModalDeleteOpen(false)} item={category}></ModalDelete>
         </div>
     );
 }
