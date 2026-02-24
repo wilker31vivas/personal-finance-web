@@ -97,7 +97,7 @@ export async function deleteTransaction(id: string): Promise<void> {
   }
 }
 
-export async function createCategory( newItem: Category ): Promise<Category> {
+export async function createCategory(newItem: Category): Promise<Category> {
   const response = await fetch(`${API_URL}/api/categories`, {
     method: "POST",
     headers: {
@@ -110,6 +110,25 @@ export async function createCategory( newItem: Category ): Promise<Category> {
     const data = await response.json().catch(() => ({}));
     throw new Error(
       data.message ?? `Error adding category (${response.status})`,
+    );
+  }
+
+  return response.json();
+}
+
+export async function updateCategory(item: Category): Promise<Category> {
+  const response = await fetch(`${API_URL}/api/categories/${item.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(item),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(
+      data.message ?? `Error editing category (${response.status})`,
     );
   }
 

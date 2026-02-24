@@ -5,7 +5,7 @@ import EmptyState from './EmptyState'
 import { useMemo, useCallback, useState } from 'react';
 import getPagination from '../utils/getPagination'
 import type { Transaction } from '../types/types'
-import { ModalEdit, ModalDelete } from './Modal'
+import { ModalDelete, ModalTransaction } from './Modal'
 
 const INITIAL_VALUE: Transaction = {
     id: "",
@@ -51,7 +51,6 @@ export default function TransactionsTable() {
     const totalTransactions = useMemo(() => {
         return transactionPages.reduce((total, page) => total + page.length, 0)
     }, [transactionPages])
-
 
     return (
         <div className="bg-surface dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm dark:shadow-slate-900/50">
@@ -211,7 +210,9 @@ export default function TransactionsTable() {
                     </div>
                 )}
 
-                <ModalEdit
+                <ModalTransaction
+                    updateData={loadData}
+                    title='Edit'
                     isOpen={isModalEditOpen}
                     onClose={() => setIsModalEditOpen(false)}
                     formData={formData}

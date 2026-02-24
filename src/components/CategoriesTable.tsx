@@ -9,6 +9,7 @@ import { getCategories } from "../api/transactions";
 export default function CategoriesTable() {
     const [category, setCategory] = useState<Category>({ id: "0", name: '' });
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+    const [isModalEditOpen, setIsModalEditOpen] = useState(false);
     const [categories, setCategories] = useState<Category[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)

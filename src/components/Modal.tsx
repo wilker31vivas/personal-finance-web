@@ -1,49 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useTransactions } from '../context/TransactionsContext';
-import { updateTransaction, createTransaction, deleteTransaction, deleteCategory, getCategories, createCategory } from '../api/transactions'
+import { deleteTransaction, deleteCategory, getCategories, updateTransaction, createTransaction  } from '../api/transactions'
 import type { Transaction, Category } from '../types/types';
 import { WarningState } from './Message';
 
-interface ModalProps {
-    isOpen: boolean,
-    onClose: () => void
-    action(newItem: Transaction): Promise<Transaction>
-    title: 'Edit' | 'Create'
-    formData: Transaction
-    setFormData: React.Dispatch<React.SetStateAction<Transaction>>
-}
-
-interface ModalCategoryProps {
+interface ModalTransactionsProps {
     isOpen: boolean,
     onClose: () => void
     title: 'Edit' | 'Create'
-    formData: Category
-}
-
-interface ModalEditProps {
-    isOpen: boolean,
-    onClose: () => void
     formData: Transaction
     setFormData: React.Dispatch<React.SetStateAction<Transaction>>
-}
-
-interface ModalCreateAndDeleteProps {
-    isOpen: boolean,
-    onClose: () => void
-    transaction?: Transaction
-}
-
-interface ModalCreateAndDeleteProps {
-    isOpen: boolean,
-    onClose: () => void
-    transaction?: Transaction
+    updateData: () => Promise<void>
 }
 
 type ModalDeleteProps = {
     isOpen: boolean,
     onClose: () => void,
     item: {
-        id: string
+        id?: string
         name?: string
         description?: string
     }
@@ -51,33 +24,28 @@ type ModalDeleteProps = {
     loadData: () => Promise<void>
 }
 
-const getTodayLocalDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-
-const getInitialTransaction = (): Transaction => {
-    return {
-        description: '',
-        amount: 0,
-        type: 'expense',
-        category: 'Food',
-        date: getTodayLocalDate()
-    }
-}
-
-function Modal({ isOpen, onClose, action, title, formData, setFormData }: ModalProps) {
-    const { categories, loadData } = useTransactions();
+export function ModalTransaction({ isOpen, onClose, title, formData, setFormData, updateData }: ModalTransactionsProps) {
     const [error, setError] = useState<null | string>(null);
+    const [categories, setCategories] = useState<Category[] | null>(null)
 
     const validate = (data: Transaction): string | null => {
         if (!data.description.trim()) return 'The description cannot be empty.';
         if (data.amount <= 0) return 'The amount must be greater than 0';
         return null;
     };
+
+    const fetchCategories = async () => {
+        try {
+            const res = await getCategories()
+            setCategories(res)
+        } catch (err) {
+            setError(`Error loading categories: ${err}`)
+        }
+    }
+
+    useEffect(() => {
+        fetchCategories()
+    }, [])
 
     const reset = () => {
         setError(null)
@@ -105,8 +73,12 @@ function Modal({ isOpen, onClose, action, title, formData, setFormData }: ModalP
         }
 
         try {
-            await action(formData);
-            await loadData();
+            if (title === 'Edit') {
+                await updateTransaction(formData);
+            } else if (title === 'Create') {
+                await createTransaction(formData);
+            }
+            await updateData();
             reset()
         } catch (error) {
             setError(error instanceof Error ? error.message : 'An error occurred while saving. Please try again.');
@@ -238,27 +210,6 @@ function Modal({ isOpen, onClose, action, title, formData, setFormData }: ModalP
     );
 }
 
-export function ModalEdit({ isOpen, onClose, formData, setFormData }: ModalEditProps) {
-    return (
-        <Modal isOpen={isOpen} onClose={onClose} action={updateTransaction} title='Edit' formData={formData} setFormData={setFormData} ></Modal>
-    )
-}
-
-export function ModalCreate({ isOpen, onClose }: ModalCreateAndDeleteProps) {
-
-    const [formData, setFormData] = useState<Transaction>(getInitialTransaction());
-
-    const handleClose = () => {
-        setFormData(getInitialTransaction());
-        onClose();
-    };
-
-    return (
-        <Modal isOpen={isOpen} onClose={handleClose} action={createTransaction} title='Create' formData={formData} setFormData={setFormData}></Modal>
-    )
-
-}
-
 export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: ModalDeleteProps) {
     const [error, setError] = useState<null | string>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -348,81 +299,4 @@ export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: Moda
             </div>
         </div>
     );
-}
-
-// MODAL FOR CATEGORY
-
-export function ModalCategory({ isOpen, onClose, title, formData }: ModalCategoryProps) {
-    const reset = () => {
-        onClose();
-    }
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        reset()
-    };
-
-    if (!isOpen) return null;
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
-            <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
-                <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
-                        {title} Category
-                    </h2>
-                    <button
-                        onClick={reset}
-                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                        aria-label="Close modal"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-text dark:text-slate-300 mb-2">
-                            Name
-                        </label>
-                        <input
-                            type="text"
-                            id="description"
-                            name="description"
-                            value={formData.name}
-                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-marguerite-500 focus:border-transparent outline-none transition-all text-text dark:text-white"
-                            placeholder="Enter description..."
-                        />
-                    </div>
-
-                    <div className="flex gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={reset}
-                            className="flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-marguerite-500 to-blue-marguerite-600 hover:from-blue-marguerite-600 hover:to-blue-marguerite-700 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                        >
-                            Save
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
-}
-
-export function ModalCategoryCreate({ isOpen, onClose }: ModalCreateAndDeleteProps) {
-    const formData = {id: '9', name: ''}
-
-    return (
-        <ModalCategory title='Create' formData={formData} isOpen={isOpen} onClose={onClose} ></ModalCategory>
-    )
-
 }

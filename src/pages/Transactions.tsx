@@ -3,7 +3,26 @@ import { ErrorState } from '../components/Message';
 import { FilterByYear, FilterByCategory, FilterByMonth, FilterByType, FilterButton } from '../components/Filters'
 import TransactionsTable from '../components/TransactionsTable'
 import { useTransactions, INITIAL_FILTERS } from '../context/TransactionsContext';
-import { ModalCreate } from '../components/Modal'
+import { ModalTransaction } from '../components/Modal'
+import type { Transaction } from '../types/types';
+
+const getTodayLocalDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+const getInitialTransaction = (): Transaction => {
+    return {
+        description: '',
+        amount: 0,
+        type: 'expense',
+        category: 'Food',
+        date: getTodayLocalDate()
+    }
+}
 
 function FilterSection() {
     const { filters, updateFilter, resetFilters } = useTransactions()
@@ -22,8 +41,9 @@ function FilterSection() {
 }
 
 export default function Transactions() {
-    const { error, setFilters } = useTransactions();
+    const { error, setFilters, loadData } = useTransactions();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState<Transaction>(getInitialTransaction());
 
     return (
         <div className="p-8 min-h-screen my-4">
@@ -55,9 +75,13 @@ export default function Transactions() {
                 )}
             </div>
 
-            <ModalCreate
+            <ModalTransaction
+                updateData={loadData}
+                title='Create'
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
+                formData={formData}
+                setFormData={setFormData}
             />
         </div>
     )
