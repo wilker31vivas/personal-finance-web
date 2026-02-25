@@ -16,11 +16,11 @@ type FilterSectionProps = {
 function FilterSection({ filters, updateFilter }: FilterSectionProps) {
     return (
         <div className="flex flex-col text-center sm:flex-row sm:justify-between sm:items-center">
-            <div>
+            <div className='text-center sm:text-left'>
                 <h1 className="text-3xl sm:text-4xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
                     Dashboard
                 </h1>
-                <p className="text-sm text-text-muted mt-1">
+                <p className="text-text-muted dark:text-slate-400 mt-1">
                     Overview of your financial data
                 </p>
             </div>

@@ -29,10 +29,10 @@ function DarkModeToggle() {
     return (
         <button
             onClick={toggleDarkMode}
-            className="flex items-center gap-4 cursor-pointer w-full px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-text-muted dark:text-slate-400 transition-all"
+            className="flex items-center gap-4 cursor-pointer w-full rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-text-muted dark:text-slate-400 transition-all"
         >
+            <span className="text-sm font-medium text-text dark:text-gray-200"> Appearance</span>
             {darkMode === 'dark' ? '🌙' : '☀️'}
-            <span className="font-medium"> Appearance</span>
         </button>
     );
 }

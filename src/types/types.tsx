@@ -47,3 +47,8 @@ export type Filters = {
 }
 
 export type UpdateFilterType = <K extends keyof Filters>(key: K, value: Filters[K]) => void
+
+export type UserSession = {
+    userName: string,
+    password: string
+}
