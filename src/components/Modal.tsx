@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { deleteTransaction, deleteCategory, updateCategory, createCategory, getCategories, updateTransaction, createTransaction } from '../api/transactions'
 import type { Transaction, Category } from '../types/types';
 import { WarningState } from './Message';
+import { useSettings } from '../context/SettingsContext'
 
 interface ModalTransactionsProps {
     isOpen: boolean,
@@ -31,6 +32,11 @@ type ModalDeleteProps = {
     }
     typeModal: 'transaction' | 'category'
     loadData: () => Promise<void>
+}
+
+type ModalProfileProps = {
+    isOpen: boolean,
+    onClose: () => void,
 }
 
 export function ModalTransaction({ isOpen, onClose, title, formData, setFormData, updateData }: ModalTransactionsProps) {
@@ -413,4 +419,44 @@ export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: Moda
             </div>
         </div>
     );
+}
+
+export function ModalProfile({ isOpen, onClose }: ModalProfileProps) {
+    const { setUserAvatar, avatarsURL } = useSettings()
+
+    if (!isOpen) return null;
+
+    return (
+        <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={onClose}
+        >
+            <div
+                className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <h3 className="text-2xl font-bold text-text mb-4">Choose Your Avatar</h3>
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                    {avatarsURL.map((avatar, i) => (
+                        <div
+                            key={i}
+                            onClick={() => {
+                                setUserAvatar(avatar);
+                                onClose();
+                            }}
+                            className="cursor-pointer rounded-full overflow-hidden ring-2 ring-gray-200 hover:ring-blue-marguerite-500 transition-all hover:scale-110"
+                        >
+                            <img src={avatar} alt={`Avatar ${i + 1}`} className="w-full h-full object-cover" />
+                        </div>
+                    ))}
+                </div>
+                <button
+                    onClick={onClose}
+                    className="w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
+    )
 }

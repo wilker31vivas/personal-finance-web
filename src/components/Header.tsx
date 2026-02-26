@@ -1,6 +1,7 @@
-import logo from '../img/john-doe.jpg'
+import { useSettings } from '../context/SettingsContext'
 
 export default function Header() {
+  const { user } = useSettings()
   return (
     <header className="relative px-4 py-2 sm:px-8 sm:py-4 bg-gradient-to-br from-blue-marguerite-600 via-blue-marguerite-500 to-blue-marguerite-700 shadow-lg overflow-hidden">
 
@@ -10,14 +11,14 @@ export default function Header() {
             Welcome back,
           </h1>
           <p className="text-xl sm:text-2xl font-bold text-white drop-shadow-sm">
-            Wilker
+            {user?.userName}
           </p>
         </div>
 
         <div className="flex items-center gap-3 sm:gap-4 bg-white/10 backdrop-blur-sm rounded-2xl px-3 py-2 sm:px-4 sm:py-3 border border-white/20 shadow-xl">
           <div className="text-right hidden sm:block">
             <p className="text-base font-semibold text-white">
-              John Doe
+              {user?.userName}
             </p>
             <p className="text-sm font-medium text-blue-marguerite-100">
               Administrator
@@ -26,8 +27,8 @@ export default function Header() {
 
           <div className="relative">
             <img
-              src={logo}
-              alt="John Doe profile"
+              src={user?.userAvatar}
+              alt={`${user?.userName} profile`}
               className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover ring-4 ring-white/30 shadow-lg"
             />
             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>

@@ -1,36 +1,13 @@
 import { useState } from "react"
-import {useAuth} from '../context/AuthContext'
+import { useSettings } from '../context/SettingsContext'
+import { ModalProfile } from './Modal'
 
 export default function Login() {
-    const { setUser } = useAuth()
-    const [userName, setUserName] = useState("")
-    const [password, setPassword] = useState("")
+    const { userAvatar, userName, password, saveUser, setUserName, setPassword } = useSettings()
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [userAvatar, setUserAvatar] = useState("https://api.dicebear.com/9.x/dylan/svg?seed=Andrea&backgroundColor=29e051&hair=plain&mood=superHappy&skinColor=c26450")
-    const avatarsURL = [
-        "https://api.dicebear.com/9.x/dylan/svg?seed=Andrea&backgroundColor=29e051&hair=plain&mood=superHappy&skinColor=c26450",
-        "https://api.dicebear.com/9.x/dylan/svg?seed=Brooklynn&mood=confused,happy,hopeful,neutral,superHappy",
-        "https://api.dicebear.com/9.x/dylan/svg?seed=Alexander&backgroundColor=619eff&mood=happy",
-        "https://api.dicebear.com/9.x/dylan/svg?seed=Aidan&backgroundColor=ffa6e6&mood=happy",
-        "https://api.dicebear.com/9.x/dylan/svg?seed=Chase&backgroundColor=619eff&mood=confused,happy,hopeful,neutral,superHappy",
-        "https://api.dicebear.com/9.x/dylan/svg?seed=Eden&backgroundColor=ffa6e6&mood=superHappy",
-        "https://api.dicebear.com/9.x/dylan/svg?seed=Eliza&backgroundColor=619eff&mood=hopeful",
-        "https://api.dicebear.com/9.x/dylan/svg?seed=Caleb&backgroundColor=ffa6e6&hair=shaggy&mood=hopeful",
-        "https://api.dicebear.com/9.x/dylan/svg?seed=Robert&mood=confused,happy,hopeful,neutral,superHappy",
-        "https://api.dicebear.com/9.x/dylan/svg?seed=Ryan&mood=confused,happy,hopeful,neutral,superHappy",
-    ]
-
-    const saveUser = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        if (userName.trim() === "") return
-        setUser({
-            userName,
-            password
-        })
-    };
 
     const getPasswordStrength = () => {
         if (password.length === 0) return { strength: 0, label: "", color: "" };
@@ -41,7 +18,6 @@ export default function Login() {
 
     const passwordStrength = getPasswordStrength();
     const passwordsMatch = password && confirmPassword && password === confirmPassword;
-
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-marguerite-50 via-purple-50 to-blue-marguerite-100 flex items-center justify-center p-4">
@@ -210,41 +186,7 @@ export default function Login() {
 
             </div>
 
-            {isModalOpen && (
-                <div
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-                    onClick={() => setIsModalOpen(false)}
-                >
-                    <div
-                        className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <h3 className="text-2xl font-bold text-text mb-4">Choose Your Avatar</h3>
-                        <p className="text-text-muted mb-6">Upload a profile picture or select from our collection</p>
-                        <div className="grid grid-cols-3 gap-4 mb-6">
-                            {avatarsURL.map((avatar, i) => (
-                                <div
-                                    key={i}
-                                    onClick={() => {
-                                        setUserAvatar(avatar);
-                                        setIsModalOpen(false);
-                                    }}
-                                    className="cursor-pointer rounded-full overflow-hidden ring-2 ring-gray-200 hover:ring-blue-marguerite-500 transition-all hover:scale-110"
-                                >
-                                    <img src={avatar} alt={`Avatar ${i + 1}`} className="w-full h-full object-cover" />
-                                </div>
-                            ))}
-                        </div>
-                        <button
-                            onClick={() => setIsModalOpen(false)}
-                            className="w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
-
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            )}
+            <ModalProfile isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}></ModalProfile>
         </div>
     );
 }

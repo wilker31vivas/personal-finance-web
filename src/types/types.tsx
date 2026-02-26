@@ -51,4 +51,5 @@ export type UpdateFilterType = <K extends keyof Filters>(key: K, value: Filters[
 export type UserSession = {
     userName: string,
     password: string
+    userAvatar: string
 }

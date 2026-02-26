@@ -8,10 +8,10 @@ import { Route, Routes } from 'react-router-dom'
 import NotFound from "./components/NotFound"
 import Settings from "./pages/Settings"
 import Login from "./components/Login"
-import { useAuth } from "./context/AuthContext"
+import { useSettings } from "./context/SettingsContext"
 
 function App() {
-  const { user } = useAuth()
+  const { user } = useSettings()
 
   if (!user) return <Login />
 
