@@ -41,7 +41,6 @@ export default function Aside() {
                     </button>
                 </div>
 
-                {/* Navegación */}
                 <nav className="flex-1 px-4 space-y-2 mt-4">
                     <NavLink to='/' className={({ isActive }) =>
                         `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive

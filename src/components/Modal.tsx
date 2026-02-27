@@ -116,7 +116,7 @@ export function ModalTransaction({ isOpen, onClose, title, formData, setFormData
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-            <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
+            <div onClick={(e) => e.stopPropagation()} className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
                         {title} Transaction
@@ -297,7 +297,7 @@ export function ModalCategory({ isOpen, onClose, title, formData, setFormData, u
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-            <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
+            <div onClick={(e) => e.stopPropagation()}  className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
                         {title} Category
@@ -401,7 +401,7 @@ export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: Moda
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-            <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-sm transform transition-all">
+            <div onClick={(e) => e.stopPropagation()} className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-sm transform transition-all">
 
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">

@@ -11,7 +11,9 @@ type SettingsContexType = {
     setUserAvatar: React.Dispatch<React.SetStateAction<string>>,
     logout: () => void,
     avatarsURL: string[],
-    saveUser: (e: React.FormEvent<HTMLFormElement>) => void
+    saveUser: (e: React.FormEvent<HTMLFormElement>) => void,
+    setIsDark: React.Dispatch<React.SetStateAction<string>>,
+    isDark: string
 }
 
 export const SettingsContext = createContext<SettingsContexType | null>(null)
@@ -39,6 +41,26 @@ export function SettingsContextProvider({ children }: { children: React.ReactNod
             return null
         }
     })
+    const [isDark, setIsDark] = useState(() => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            return savedTheme;
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark'
+        }
+        return 'light'
+    });
+
+    useEffect(() => {
+        const root = document.documentElement;
+        if (isDark === 'dark') {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
+        localStorage.setItem('theme', isDark);
+    }, [isDark]);
 
     const saveUser = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -51,6 +73,7 @@ export function SettingsContextProvider({ children }: { children: React.ReactNod
     };
 
     const updateUserAvatar = (avatar: string) => {
+        setUserAvatar(avatar)
         setUser(prev => {
             if (!prev) return prev;
 
@@ -85,7 +108,7 @@ export function SettingsContextProvider({ children }: { children: React.ReactNod
     const logout = () => setUser(null)
 
     return (
-        <SettingsContext.Provider value={{ user, updateUserAvatar, updateUserName, avatarsURL, saveUser, logout, userName, setUserName, userAvatar, setUserAvatar }}>
+        <SettingsContext.Provider value={{ user, updateUserAvatar, updateUserName, avatarsURL, saveUser, logout, userName, setUserName, userAvatar, setUserAvatar, isDark, setIsDark }}>
             {children}
         </SettingsContext.Provider>
     )

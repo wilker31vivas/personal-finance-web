@@ -23,8 +23,8 @@ export default function CategoriesTable({ error, loading, loadData, categories }
         <div className="bg-surface dark:bg-surface-dark rounded-2xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-lg dark:shadow-slate-900/50">
             <div className="overflow-x-auto">
                 <table className="w-full text-left" aria-label="Categories table">
-                    <thead>
-                        <tr className="bg-blue-marguerite-50  dark:from-blue-marguerite-950/30 dark:to-purple-950/30 border-b-2 border-blue-marguerite-200 dark:border-blue-marguerite-800">
+                    <thead className="border-b border-blue-marguerite-200 dark:border-blue-marguerite-800">
+                        <tr className="">
                             <th className="px-6 py-4 text-xs font-bold text-blue-marguerite-700 dark:text-blue-marguerite-300 uppercase tracking-wider">
                                 Category Name
                             </th>

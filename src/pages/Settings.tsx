@@ -1,27 +1,9 @@
 import { useState, useEffect } from "react";
 import { ModalProfile } from "../components/Modal";
+import { useSettings } from "../context/SettingsContext";
 
 function DarkModeToggle() {
-    const [isDark, setIsDark] = useState(() => {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            return savedTheme;
-        }
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark'
-        }
-        return 'light'
-    });
-
-    useEffect(() => {
-        const root = document.documentElement;
-        if (isDark === 'dark') {
-            root.classList.add('dark');
-        } else {
-            root.classList.remove('dark');
-        }
-        localStorage.setItem('theme', isDark);
-    }, [isDark]);
+    const { isDark, setIsDark } = useSettings()
 
     const toggleDarkMode = () => {
         setIsDark(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
