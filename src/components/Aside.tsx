@@ -68,14 +68,6 @@ export default function Aside() {
                     }>
                         <span className="font-medium">Categories</span>
                     </NavLink>
-                    <NavLink to='/accounts' className={({ isActive }) =>
-                        `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
-                            ? "bg-blue-marguerite-50 dark:bg-blue-marguerite-900/30 text-blue-marguerite-700 dark:text-blue-marguerite-300 font-semibold"
-                            : "text-text-muted dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-background-dark/50"
-                        }`
-                    }>
-                        <span className="font-medium">Accounts</span>
-                    </NavLink>
                     <NavLink to='/settings' className={({ isActive }) =>
                         `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
                             ? "bg-blue-marguerite-50 dark:bg-blue-marguerite-900/30 text-blue-marguerite-700 dark:text-blue-marguerite-300 font-semibold"
@@ -85,10 +77,6 @@ export default function Aside() {
                         <span className="font-medium">Settings</span>
                     </NavLink>
                 </nav>
-
-                <div className="p-4 border-t border-slate-200 dark:border-slate-700 flex">
-                    <DarkModeToggle></DarkModeToggle>
-                </div>
             </aside>
         </>
     )

@@ -5,10 +5,10 @@ import EmptyState from './EmptyState'
 import { useMemo, useCallback, useState } from 'react';
 import getPagination from '../utils/getPagination'
 import type { Transaction } from '../types/types'
-import { ModalEdit, ModalDelete } from './Modal'
+import { ModalDelete, ModalTransaction } from './Modal'
 
 const INITIAL_VALUE: Transaction = {
-    id: undefined,
+    id: "",
     description: '',
     amount: 0,
     type: 'expense',
@@ -17,11 +17,10 @@ const INITIAL_VALUE: Transaction = {
 }
 
 export default function TransactionsTable() {
-    const { loading, transactionPages, setFilters, pageCurrent, setPageCurrent } = useTransactions()
+    const { loading, transactionPages, setFilters, pageCurrent, setPageCurrent, loadData } = useTransactions()
     const [isModalEditOpen, setIsModalEditOpen] = useState(false);
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [formData, setFormData] = useState<Transaction>(INITIAL_VALUE);
-
 
     const totalPages = transactionPages.length
     const pagesToShow = useMemo(() => {
@@ -52,7 +51,6 @@ export default function TransactionsTable() {
     const totalTransactions = useMemo(() => {
         return transactionPages.reduce((total, page) => total + page.length, 0)
     }, [transactionPages])
-
 
     return (
         <div className="bg-surface dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm dark:shadow-slate-900/50">
@@ -212,16 +210,20 @@ export default function TransactionsTable() {
                     </div>
                 )}
 
-                <ModalEdit
+                <ModalTransaction
+                    updateData={loadData}
+                    title='Edit'
                     isOpen={isModalEditOpen}
                     onClose={() => setIsModalEditOpen(false)}
                     formData={formData}
                     setFormData={setFormData}
                 />
                 <ModalDelete
+                    loadData={loadData}
+                    typeModal='transaction'
                     isOpen={isModalDeleteOpen}
                     onClose={() => setIsModalDeleteOpen(false)}
-                    transaction={formData}
+                    item={{ id: formData.id, description: formData.description }}
                 />
             </div>
         </div>

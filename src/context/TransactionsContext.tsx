@@ -91,7 +91,6 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
 }
 
 export function useTransactions() {
-    TransactionsContext
     const context = useContext(TransactionsContext);
     if (!context) {
         throw new Error("useTransactions must be used within TransactionsContextProvider");

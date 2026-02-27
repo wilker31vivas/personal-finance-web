@@ -3,7 +3,26 @@ import { ErrorState } from '../components/Message';
 import { FilterByYear, FilterByCategory, FilterByMonth, FilterByType, FilterButton } from '../components/Filters'
 import TransactionsTable from '../components/TransactionsTable'
 import { useTransactions, INITIAL_FILTERS } from '../context/TransactionsContext';
-import { ModalCreate } from '../components/Modal'
+import { ModalTransaction } from '../components/Modal'
+import type { Transaction } from '../types/types';
+
+const getTodayLocalDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+const getInitialTransaction = (): Transaction => {
+    return {
+        description: '',
+        amount: 0,
+        type: 'expense',
+        category: 'Food',
+        date: getTodayLocalDate()
+    }
+}
 
 function FilterSection() {
     const { filters, updateFilter, resetFilters } = useTransactions()
@@ -22,8 +41,9 @@ function FilterSection() {
 }
 
 export default function Transactions() {
-    const { error, setFilters } = useTransactions();
+    const { error, setFilters, loadData } = useTransactions();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState<Transaction>(getInitialTransaction());
 
     return (
         <div className="p-8 min-h-screen my-4">
@@ -36,7 +56,10 @@ export default function Transactions() {
                         <p className="text-text-muted dark:text-slate-400 mt-1">Manage your finances</p>
                     </div>
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => {
+                            setIsModalOpen(true)
+                            setFormData(getInitialTransaction())
+                        }}
                         aria-label="Create new transaction"
                         className="text-lg cursor-pointer bg-gradient-to-r from-blue-marguerite-500 to-blue-marguerite-600 hover:from-blue-marguerite-600 hover:to-blue-marguerite-700 text-white px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                     >
@@ -44,7 +67,6 @@ export default function Transactions() {
                     </button>
                 </div>
 
-                {/* Filters Card */}
                 <FilterSection />
 
                 {error ? (
@@ -56,9 +78,13 @@ export default function Transactions() {
                 )}
             </div>
 
-            <ModalCreate
+            <ModalTransaction
+                updateData={loadData}
+                title='Create'
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
+                formData={formData}
+                setFormData={setFormData}
             />
         </div>
     )

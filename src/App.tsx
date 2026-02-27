@@ -6,8 +6,15 @@ import Categories from "./pages/Categories"
 import Aside from "./components/Aside"
 import { Route, Routes } from 'react-router-dom'
 import NotFound from "./components/NotFound"
+import Settings from "./pages/Settings"
+import Login from "./components/Login"
+import { useSettings } from "./context/SettingsContext"
 
 function App() {
+  const { user } = useSettings()
+
+  if (!user) return <Login />
+
   return (
     <div className='h-screen flex overflow-hidden bg-background-light dark:bg-background-dark text-slate-900 '>
       <Aside />
@@ -18,12 +25,15 @@ function App() {
               <Dashboard />
             </DashboardContextProvider>}>
           </Route>
-          <Route path="/categories" element={<Categories />}></Route>
+          <Route path="/categories" element={<Categories />}/>
           <Route path="/transactions" element={
             <TransactionsContextProvider>
               <Transactions />
             </TransactionsContextProvider>}>
           </Route>
+          <Route path="/settings" element={
+            <Settings></Settings>
+          }/>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

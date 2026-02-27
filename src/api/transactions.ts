@@ -46,40 +46,108 @@ export async function getAllCategories(filters = {}): Promise<DataOptions[]> {
   return res.json();
 }
 
-export async function createTransaction(newItem: Transaction) {
-  try {
-    await fetch(`${API_URL}/api/transactions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newItem),
-    });
-  } catch (error) {
-    throw new Error(`Error adding transition ${error}`);
+export async function createTransaction(
+  newItem: Transaction,
+): Promise<Transaction> {
+  const response = await fetch(`${API_URL}/api/transactions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newItem),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(
+      data.message ?? `Error adding transaction (${response.status})`,
+    );
+  }
+
+  return response.json();
+}
+
+export async function updateTransaction(
+  item: Transaction,
+): Promise<Transaction> {
+  const response = await fetch(`${API_URL}/api/transactions/${item.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(item),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(
+      data.message ?? `Error editing transaction (${response.status})`,
+    );
+  }
+
+  return response.json();
+}
+
+export async function deleteTransaction(id: string): Promise<void> {
+  const response = await fetch(`${API_URL}/api/transactions/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(
+      data.message ?? `Error delete transition (${response.status})`,
+    );
   }
 }
 
-export async function updateTransaction(item: Transaction) {
-  try {
-    await fetch(`${API_URL}/api/transactions/${item.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(item),
-    });
-  } catch (error) {
-    throw new Error(`Error editing transition ${error}`);
+export async function createCategory(newItem: Category): Promise<Category> {
+  const response = await fetch(`${API_URL}/api/categories`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newItem),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(
+      data.message ?? `Error adding category (${response.status})`,
+    );
   }
+
+  return response.json();
 }
 
-export async function deleteTransaction(item: string) {
-  try {
-    await fetch(`${API_URL}/api/transactions/${item}`, {
-      method: "DELETE",
-    });
-  } catch (error) {
-    throw new Error(`Error delete transition ${error}`);
+export async function updateCategory(item: Category): Promise<Category> {
+  const response = await fetch(`${API_URL}/api/categories/${item.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(item),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(
+      data.message ?? `Error editing category (${response.status})`,
+    );
+  }
+
+  return response.json();
+}
+
+export async function deleteCategory(id: string): Promise<void> {
+  const response = await fetch(`${API_URL}/api/categories/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(
+      data.message ?? `Error deleting category (${response.status})`,
+    );
   }
 }
