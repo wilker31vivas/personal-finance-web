@@ -37,11 +37,23 @@ type ModalDeleteProps = {
 type ModalProfileProps = {
     isOpen: boolean,
     onClose: () => void,
+    typeModal: 'name' | 'photo'
 }
 
 export function ModalTransaction({ isOpen, onClose, title, formData, setFormData, updateData }: ModalTransactionsProps) {
     const [error, setError] = useState<null | string>(null);
     const [categories, setCategories] = useState<Category[] | null>(null)
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
 
     const validate = (data: Transaction): string | null => {
         if (!data.description.trim()) return 'The description cannot be empty.';
@@ -103,7 +115,7 @@ export function ModalTransaction({ isOpen, onClose, title, formData, setFormData
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
             <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
@@ -228,6 +240,17 @@ export function ModalTransaction({ isOpen, onClose, title, formData, setFormData
 export function ModalCategory({ isOpen, onClose, title, formData, setFormData, updateData }: ModalCategoryProps) {
     const [error, setError] = useState<null | string>(null);
 
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
+
     const validate = (data: Category): string | null => {
         if (!data.name.trim()) return 'The name cannot be empty.';
         return null;
@@ -273,7 +296,7 @@ export function ModalCategory({ isOpen, onClose, title, formData, setFormData, u
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
             <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
@@ -334,6 +357,17 @@ export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: Moda
     const [error, setError] = useState<null | string>(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
+
     const handleConfirm = async () => {
         if (!item?.id) return;
         setIsLoading(true);
@@ -366,7 +400,7 @@ export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: Moda
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
             <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-sm transform transition-all">
 
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
@@ -421,13 +455,24 @@ export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: Moda
     );
 }
 
-export function ModalProfile({ isOpen, onClose }: ModalProfileProps) {
-    const { setUserAvatar, avatarsURL } = useSettings()
+export function ModalProfile({ isOpen, onClose, typeModal }: ModalProfileProps) {
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
 
     if (!isOpen) return null;
 
     return (
         <div
+            role="dialog"
+            aria-modal="true"
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             onClick={onClose}
         >
@@ -435,28 +480,88 @@ export function ModalProfile({ isOpen, onClose }: ModalProfileProps) {
                 className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
-                <h3 className="text-2xl font-bold text-text mb-4">Choose Your Avatar</h3>
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                    {avatarsURL.map((avatar, i) => (
-                        <div
-                            key={i}
-                            onClick={() => {
-                                setUserAvatar(avatar);
-                                onClose();
-                            }}
-                            className="cursor-pointer rounded-full overflow-hidden ring-2 ring-gray-200 hover:ring-blue-marguerite-500 transition-all hover:scale-110"
-                        >
-                            <img src={avatar} alt={`Avatar ${i + 1}`} className="w-full h-full object-cover" />
-                        </div>
-                    ))}
-                </div>
-                <button
-                    onClick={onClose}
-                    className="w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
-                >
-                    Cancel
-                </button>
+                <h3 className="text-2xl font-bold text-text mb-4">{typeModal === 'name' ? 'Edit your name' : 'Choose Your Avatar'}</h3>
+                {typeModal === 'name' ?
+                    <NameModal onClose={onClose} /> : <AvatarModal onClose={onClose} />
+                }
             </div>
         </div>
+    )
+}
+
+function NameModal({ onClose }: { onClose: () => void }) {
+    const { updateUserName, userName, setUserName } = useSettings()
+
+    return (
+        <div>
+            <form onSubmit={(e) => {
+                e.preventDefault();
+                updateUserName(userName);
+                onClose();
+            }} className="space-y-4">
+                <div>
+                    <label
+                        htmlFor="username"
+                        className="text-sm font-semibold text-text mb-2 flex items-center gap-2"
+                    >
+                        Username
+                    </label>
+                    <input
+                        id="username"
+                        type="text"
+                        value={userName}
+                        onChange={e => setUserName(e.target.value)}
+                        required
+                        placeholder="Change the username"
+                        className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl font-medium text-text placeholder:text-gray-400 focus:border-blue-marguerite-500 focus:ring-4 focus:ring-blue-marguerite-100 transition-all outline-none"
+                    />
+                </div>
+                <div className='flex gap-4'>
+                    <button type='submit'
+                        className="group w-full flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-marguerite-500 to-purple-600 hover:from-blue-marguerite-600 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg"
+                    >
+                        <span>Save name</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
+                    >
+                        Cancel
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    )
+}
+
+function AvatarModal({ onClose }: { onClose: () => void }) {
+    const { updateUserAvatar, avatarsURL } = useSettings()
+
+    return (
+        <>
+            <div className="grid grid-cols-3 gap-4 mb-6">
+                {avatarsURL.map((avatar, i) => (
+                    <div
+                        key={i}
+                        onClick={() => {
+                            updateUserAvatar(avatar);
+                            onClose();
+                        }}
+                        className="cursor-pointer rounded-full overflow-hidden ring-2 ring-gray-200 hover:ring-blue-marguerite-500 transition-all hover:scale-110"
+                    >
+                        <img src={avatar} alt={`Avatar ${i + 1}`} className="w-full h-full object-cover" />
+                    </div>
+                ))}
+            </div>
+            <button
+                onClick={onClose}
+                className="w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
+            >
+                Cancel
+            </button>
+        </>
     )
 }

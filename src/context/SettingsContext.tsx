@@ -3,11 +3,10 @@ import type { UserSession } from '../types/types'
 
 type SettingsContexType = {
     user: UserSession | null,
-    setUser: (user: UserSession | null) => void,
+    updateUserAvatar: (avatar: string) => void,
+    updateUserName: (name: string) => void,
     userName: string,
     setUserName: React.Dispatch<React.SetStateAction<string>>,
-    setPassword: React.Dispatch<React.SetStateAction<string>>,
-    password: string
     userAvatar: string,
     setUserAvatar: React.Dispatch<React.SetStateAction<string>>,
     logout: () => void,
@@ -20,7 +19,6 @@ export const SettingsContext = createContext<SettingsContexType | null>(null)
 export function SettingsContextProvider({ children }: { children: React.ReactNode }) {
     const [userAvatar, setUserAvatar] = useState("https://api.dicebear.com/9.x/dylan/svg?seed=Andrea&backgroundColor=29e051&hair=plain&mood=superHappy&skinColor=c26450")
     const [userName, setUserName] = useState("")
-    const [password, setPassword] = useState("")
     const avatarsURL = [
         "https://api.dicebear.com/9.x/dylan/svg?seed=Andrea&backgroundColor=29e051&hair=plain&mood=superHappy&skinColor=c26450",
         "https://api.dicebear.com/9.x/dylan/svg?seed=Brooklynn&mood=confused,happy,hopeful,neutral,superHappy",
@@ -42,16 +40,39 @@ export function SettingsContextProvider({ children }: { children: React.ReactNod
         }
     })
 
-
     const saveUser = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        if (userName.trim() === "") return
+        e.preventDefault();
+        if (userName.trim() === "") return;
+
         setUser({
             userName,
-            password,
             userAvatar
-        })
+        });
     };
+
+    const updateUserAvatar = (avatar: string) => {
+        setUser(prev => {
+            if (!prev) return prev;
+
+            return {
+                ...prev,
+                userAvatar: avatar
+            };
+        });
+    }
+
+    const updateUserName = (name: string) => {
+        if (name.trim() === "") return;
+
+        setUser(prev => {
+            if (!prev) return prev;
+
+            return {
+                ...prev,
+                userName: name
+            };
+        });
+    }
 
     useEffect(() => {
         if (user) {
@@ -64,7 +85,7 @@ export function SettingsContextProvider({ children }: { children: React.ReactNod
     const logout = () => setUser(null)
 
     return (
-        <SettingsContext.Provider value={{ user, setUser, logout, avatarsURL, saveUser, password, userName, setUserName, setPassword, userAvatar, setUserAvatar }}>
+        <SettingsContext.Provider value={{ user, updateUserAvatar, updateUserName, avatarsURL, saveUser, logout, userName, setUserName, userAvatar, setUserAvatar }}>
             {children}
         </SettingsContext.Provider>
     )

@@ -50,19 +50,28 @@ function DarkModeToggle() {
 }
 
 export default function Settings() {
-    const [isModalUserOpen, setIsModalUserOpen] = useState(false)
+    const [isModalPhotoOpen, setIsModalPhotoOpen] = useState(false)
+    const [isModalNameOpen, setIsModalNameOpen] = useState(false)
 
     const settingsOptions = [
         {
             id: 1,
-            title: "Change name and photo",
-            description: "Update your profile information",
+            title: "Change name",
+            description: "Update your name profile",
             iconBg: "from-blue-marguerite-100 to-blue-marguerite-200",
             iconColor: "text-blue-marguerite-600",
-            onClick: () => setIsModalUserOpen(true)
+            onClick: () => setIsModalNameOpen(true)
         },
         {
             id: 2,
+            title: "Change photo",
+            description: "Update your photo profile",
+            iconBg: "from-blue-marguerite-100 to-blue-marguerite-200",
+            iconColor: "text-blue-marguerite-600",
+            onClick: () => setIsModalPhotoOpen(true)
+        },
+        {
+            id: 3,
             title: "Language",
             description: "Select your preferred language",
             iconBg: "from-green-100 to-emerald-200",
@@ -149,7 +158,8 @@ export default function Settings() {
                     </div>
                 </div>
 
-                <ModalProfile isOpen={isModalUserOpen} onClose={() => setIsModalUserOpen(false)}></ModalProfile>
+                <ModalProfile isOpen={isModalPhotoOpen} onClose={() => setIsModalPhotoOpen(false)} typeModal="photo"></ModalProfile>
+                <ModalProfile isOpen={isModalNameOpen} onClose={() => setIsModalNameOpen(false)} typeModal="name"></ModalProfile>
             </div>
         </div>
     )
