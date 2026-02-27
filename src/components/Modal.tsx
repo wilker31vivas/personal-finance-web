@@ -297,7 +297,7 @@ export function ModalCategory({ isOpen, onClose, title, formData, setFormData, u
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-            <div onClick={(e) => e.stopPropagation()}  className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
+            <div onClick={(e) => e.stopPropagation()} className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
                         {title} Category
@@ -477,10 +477,10 @@ export function ModalProfile({ isOpen, onClose, typeModal }: ModalProfileProps) 
             onClick={onClose}
         >
             <div
-                className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl"
+                className="bg-surface dark:bg-surface-dark rounded-2xl p-8 max-w-md w-full shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
-                <h3 className="text-2xl font-bold text-text mb-4">{typeModal === 'name' ? 'Edit your name' : 'Choose Your Avatar'}</h3>
+                <h3 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent mb-4">{typeModal === 'name' ? 'Edit your name' : 'Choose Your Avatar'}</h3>
                 {typeModal === 'name' ?
                     <NameModal onClose={onClose} /> : <AvatarModal onClose={onClose} />
                 }
@@ -502,7 +502,8 @@ function NameModal({ onClose }: { onClose: () => void }) {
                 <div>
                     <label
                         htmlFor="username"
-                        className="text-sm font-semibold text-text mb-2 flex items-center gap-2"
+                        className="text-sm text-text-muted uppercase font-semibold items-center gap-2"
+
                     >
                         Username
                     </label>
@@ -518,7 +519,7 @@ function NameModal({ onClose }: { onClose: () => void }) {
                 </div>
                 <div className='flex gap-4'>
                     <button type='submit'
-                        className="group w-full flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-marguerite-500 to-purple-600 hover:from-blue-marguerite-600 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg"
+                        className="w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
                     >
                         <span>Save name</span>
                     </button>

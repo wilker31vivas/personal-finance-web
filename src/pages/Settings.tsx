@@ -52,14 +52,6 @@ export default function Settings() {
             iconColor: "text-blue-marguerite-600",
             onClick: () => setIsModalPhotoOpen(true)
         },
-        {
-            id: 3,
-            title: "Language",
-            description: "Select your preferred language",
-            iconBg: "from-green-100 to-emerald-200",
-            iconColor: "text-green-600",
-            onClick: () => console.log("Change language")
-        }
     ];
 
     const handleDeleteAccount = () => {
@@ -76,7 +68,7 @@ export default function Settings() {
                     <h1 className="text-3xl sm:text-4xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
                         Settings
                     </h1>
-                    <p className="text-text-muted dark:text-slate-400 mt-1">Manage your account preferences and settings</p>
+                    <p className="text-text-muted dark:text-slate-400 mt-1">Manage your account preferences</p>
                 </div>
 
                 {/* Account Settings Section */}
@@ -113,7 +105,7 @@ export default function Settings() {
                     </div>
                 </div>
 
-                {/* Danger Zone */}
+                {/* Danger Zone 
                 <div>
                     <h2 className="text-sm font-bold text-red-600 uppercase tracking-wide mb-3 px-2">
                         Danger Zone
@@ -139,7 +131,7 @@ export default function Settings() {
                         </button>
                     </div>
                 </div>
-
+                */}
                 <ModalProfile isOpen={isModalPhotoOpen} onClose={() => setIsModalPhotoOpen(false)} typeModal="photo"></ModalProfile>
                 <ModalProfile isOpen={isModalNameOpen} onClose={() => setIsModalNameOpen(false)} typeModal="name"></ModalProfile>
             </div>
