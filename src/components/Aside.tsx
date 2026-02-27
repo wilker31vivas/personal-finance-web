@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { NavLink } from "react-router-dom"
-import DarkModeToggle from "./DarkModeToggle"
 
 export default function Aside() {
     const [open, setOpen] = useState(false)
