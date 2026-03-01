@@ -3,6 +3,7 @@ import type { UserSession } from '../types/types'
 
 type SettingsContexType = {
     user: UserSession | null,
+    setUser: React.Dispatch<React.SetStateAction<UserSession | null>>,
     updateUserAvatar: (avatar: string) => void,
     updateUserName: (name: string) => void,
     userName: string,
@@ -108,7 +109,7 @@ export function SettingsContextProvider({ children }: { children: React.ReactNod
     const logout = () => setUser(null)
 
     return (
-        <SettingsContext.Provider value={{ user, updateUserAvatar, updateUserName, avatarsURL, saveUser, logout, userName, setUserName, userAvatar, setUserAvatar, isDark, setIsDark }}>
+        <SettingsContext.Provider value={{ user, setUser, updateUserAvatar, updateUserName, avatarsURL, saveUser, logout, userName, setUserName, userAvatar, setUserAvatar, isDark, setIsDark }}>
             {children}
         </SettingsContext.Provider>
     )

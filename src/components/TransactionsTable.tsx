@@ -6,6 +6,7 @@ import { useMemo, useCallback, useState } from 'react';
 import getPagination from '../utils/getPagination'
 import type { Transaction } from '../types/types'
 import { ModalDelete, ModalTransaction } from './Modal'
+import { deleteTransaction } from '../api/transactions'
 
 const INITIAL_VALUE: Transaction = {
     id: "",
@@ -219,11 +220,17 @@ export default function TransactionsTable() {
                     setFormData={setFormData}
                 />
                 <ModalDelete
-                    loadData={loadData}
-                    typeModal='transaction'
                     isOpen={isModalDeleteOpen}
                     onClose={() => setIsModalDeleteOpen(false)}
-                    item={{ id: formData.id, description: formData.description }}
+                    title="Delete Transaction"
+                    description="Are you sure you want to delete"
+                    itemName={formData.description}
+                    onConfirm={async () => {
+                        if (formData.id) {
+                            await deleteTransaction(formData.id);
+                            await loadData();
+                        }
+                    }}
                 />
             </div>
         </div>

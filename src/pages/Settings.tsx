@@ -34,8 +34,8 @@ function DarkModeToggle() {
 export default function Settings() {
     const [isModalPhotoOpen, setIsModalPhotoOpen] = useState(false)
     const [isModalNameOpen, setIsModalNameOpen] = useState(false)
-    const [isModalNameDelete, setIsModalDelete] = useState(false)
-
+    const [isModalDelete, setIsModalDelete] = useState(false)
+    const { setUser, setUserName } = useSettings()
 
     const settingsOptions = [
         {
@@ -55,11 +55,10 @@ export default function Settings() {
             onClick: () => setIsModalPhotoOpen(true)
         },
     ];
-    
+
     return (
         <div className="min-h-screen p-4 sm:p-8">
             <div className="max-w-7xl mx-auto">
-                {/* Header */}
                 <div className="text-center sm:text-left mb-6">
                     <h1 className="text-3xl sm:text-4xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
                         Settings
@@ -67,7 +66,6 @@ export default function Settings() {
                     <p className="text-text-muted dark:text-slate-400 mt-1">Manage your account preferences</p>
                 </div>
 
-                {/* Account Settings Section */}
                 <div className="mb-6">
                     <h2 className="text-sm font-bold text-text-muted uppercase tracking-wide mb-3 px-2">
                         Account Settings
@@ -96,12 +94,10 @@ export default function Settings() {
                             </button>
                         ))}
 
-                        {/* Dark Mode Toggle */}
                         <DarkModeToggle />
                     </div>
                 </div>
 
-                {/* Danger Zone */}
                 <div>
                     <h2 className="text-sm font-bold text-red-600 uppercase tracking-wide mb-3 px-2">
                         Danger Zone
@@ -128,9 +124,19 @@ export default function Settings() {
                     </div>
                 </div>
 
-                <ModalDelete isOpen={isModalNameDelete} onClose={() => setIsModalDelete(false)} typeModal="account"></ModalDelete>
-                <ModalProfile isOpen={isModalPhotoOpen} onClose={() => setIsModalPhotoOpen(false)} typeModal="photo"></ModalProfile>
-                <ModalProfile isOpen={isModalNameOpen} onClose={() => setIsModalNameOpen(false)} typeModal="name"></ModalProfile>
+                <ModalDelete
+                    isOpen={isModalDelete}
+                    onClose={() => setIsModalDelete(false)}
+                    title="Delete Account"
+                    description="Are you sure you want to delete your account"
+                    onConfirm={() => {
+                        localStorage.removeItem("user-login-finances");
+                        setUserName("")
+                        setUser(null);
+                    }}
+                />
+                <ModalProfile isOpen={isModalPhotoOpen} onClose={() => setIsModalPhotoOpen(false)} typeModal="photo"/>
+                <ModalProfile isOpen={isModalNameOpen} onClose={() => setIsModalNameOpen(false)} typeModal="name"/>
             </div>
         </div>
     )

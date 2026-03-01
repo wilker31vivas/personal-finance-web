@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { deleteTransaction, deleteCategory, updateCategory, createCategory, getCategories, updateTransaction, createTransaction } from '../api/transactions'
+import { updateCategory, createCategory, getCategories, updateTransaction, createTransaction } from '../api/transactions'
 import type { Transaction, Category } from '../types/types';
 import { WarningState } from './Message';
 import { useSettings } from '../context/SettingsContext'
@@ -23,15 +23,12 @@ type ModalCategoryProps = {
 }
 
 type ModalDeleteProps = {
-    isOpen: boolean,
-    onClose: () => void,
-    item?: {
-        id?: string
-        name?: string
-        description?: string
-    }
-    typeModal: 'transaction' | 'category' | 'account'
-    loadData?: () => Promise<void>
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => Promise<void> | void;
+    title: string;
+    description: string;
+    itemName?: string;
 }
 
 type ModalProfileProps = {
@@ -353,7 +350,14 @@ export function ModalCategory({ isOpen, onClose, title, formData, setFormData, u
     );
 }
 
-export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: ModalDeleteProps) {
+export function ModalDelete({
+    isOpen,
+    onClose,
+    onConfirm,
+    title,
+    description,
+    itemName,
+}: ModalDeleteProps) {
     const [error, setError] = useState<null | string>(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -368,42 +372,32 @@ export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: Moda
         return () => window.removeEventListener('keydown', handleEsc);
     }, [isOpen, onClose]);
 
-    const handleConfirm = async () => {
-        if (!item?.id) return;
-        setIsLoading(true);
+    useEffect(() => {
+        if (isOpen) setError(null);
+    }, [isOpen]);
 
-        try {
-            if (typeModal === 'transaction') {
-                await deleteTransaction(item.id);
-            }
-            if (typeModal === 'category') {
-                await deleteCategory(item.id);
-            }
-            if (loadData) {
-                await loadData();
-            }
-            if (typeModal === 'account') {
-                localStorage.removeItem('user-login-finances')
-            }
-            onClose();
-        }
-        catch (error) {
-            setError(error instanceof Error ? error.message : 'An error occurred while deleting. Please try again.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    if (!isOpen) return null;
 
     const handleCancel = () => {
         setError(null);
         onClose();
     };
 
-    useEffect(() => {
-        if (isOpen) setError(null);
-    }, [isOpen]);
-
-    if (!isOpen) return null;
+    const handleConfirm = async () => {
+        try {
+            setIsLoading(true);
+            await onConfirm();
+            onClose();
+        } catch (err) {
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "An unexpected error occurred."
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
@@ -411,7 +405,7 @@ export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: Moda
 
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
-                        Delete {typeModal === 'transaction' && "Transaction"} {typeModal === 'category' && "Category"} {typeModal === 'account' && "Account"}
+                        {title}
                     </h2>
                     <button onClick={handleCancel} className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors" aria-label="Close modal">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -430,8 +424,11 @@ export function ModalDelete({ isOpen, onClose, item, loadData, typeModal }: Moda
                     </div>
 
                     <p className="text-center text-text dark:text-slate-300 text-md">
-                        Are you sure you want to delete the {typeModal === 'transaction' && "Transaction"} {typeModal === 'category' && "Category"} {typeModal === 'account' && "Account"} {' '}
-                        <span className="font-semibold text-text dark:text-white">"{typeModal === 'transaction' ? item?.description : item?.name}"</span>?
+                        {description}{" "}
+                        {itemName && (
+                            <span className="font-semibold text-text dark:text-white">"{itemName}"</span>
+                        )}
+                        <br />
                         This action cannot be undone.
                     </p>
 

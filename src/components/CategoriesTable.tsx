@@ -4,6 +4,7 @@ import type { Category } from "../types/types";
 import { useState } from "react";
 import { ModalDelete, ModalCategory } from '../components/Modal'
 import { ErrorState } from "./Message";
+import { deleteCategory } from "../api/transactions";
 
 type CategoriesTable = {
     error: string | null
@@ -16,6 +17,7 @@ export default function CategoriesTable({ error, loading, loadData, categories }
     const [category, setCategory] = useState<Category>({ id: "", name: '' });
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+
 
     if (error) return <ErrorState title={error} onRetry={loadData}></ErrorState>
 
@@ -102,7 +104,17 @@ export default function CategoriesTable({ error, loading, loadData, categories }
                 </table>
             </div>
             <ModalCategory isOpen={isModalEditOpen} onClose={() => setIsModalEditOpen(false)} title="Edit" formData={category} setFormData={setCategory} updateData={loadData}></ModalCategory>
-            <ModalDelete typeModal="category" loadData={loadData} isOpen={isModalDeleteOpen} onClose={() => setIsModalDeleteOpen(false)} item={category}></ModalDelete>
+            <ModalDelete isOpen={isModalDeleteOpen}
+                onClose={() => setIsModalDeleteOpen(false)}
+                title="Delete Category"
+                description="Are you sure you want to delete"
+                itemName={category.name}
+                onConfirm={async () => {
+                    if (category.id) {
+                        await deleteCategory(category.id);
+                    }
+                }} />
         </div>
+
     );
 }
