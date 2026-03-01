@@ -55,13 +55,7 @@ export default function Settings() {
             onClick: () => setIsModalPhotoOpen(true)
         },
     ];
-
-    const handleDeleteAccount = () => {
-        if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-            console.log("Delete account");
-        }
-    };
-
+    
     return (
         <div className="min-h-screen p-4 sm:p-8">
             <div className="max-w-7xl mx-auto">
