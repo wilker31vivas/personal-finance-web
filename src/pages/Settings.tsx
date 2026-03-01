@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ModalProfile } from "../components/Modal";
+import { ModalProfile, ModalDelete } from "../components/Modal";
 import { useSettings } from "../context/SettingsContext";
 
 function DarkModeToggle() {
@@ -34,6 +34,8 @@ function DarkModeToggle() {
 export default function Settings() {
     const [isModalPhotoOpen, setIsModalPhotoOpen] = useState(false)
     const [isModalNameOpen, setIsModalNameOpen] = useState(false)
+    const [isModalNameDelete, setIsModalDelete] = useState(false)
+
 
     const settingsOptions = [
         {
@@ -105,14 +107,14 @@ export default function Settings() {
                     </div>
                 </div>
 
-                {/* Danger Zone 
+                {/* Danger Zone */}
                 <div>
                     <h2 className="text-sm font-bold text-red-600 uppercase tracking-wide mb-3 px-2">
                         Danger Zone
                     </h2>
                     <div className="bg-surface dark:bg-surface-dark rounded-2xl overflow-hidden shadow-lg">
                         <button
-                            onClick={handleDeleteAccount}
+                            onClick={() => setIsModalDelete(true)}
                             className="cursor-pointer w-full flex items-center justify-between p-6 hover:bg-blue-marguerite-50/50 dark:hover:bg-white/5 transition-colors duration-200 group"
                         >
                             <div className="flex items-center gap-4">
@@ -131,7 +133,8 @@ export default function Settings() {
                         </button>
                     </div>
                 </div>
-                */}
+
+                <ModalDelete isOpen={isModalNameDelete} onClose={() => setIsModalDelete(false)} typeModal="account"></ModalDelete>
                 <ModalProfile isOpen={isModalPhotoOpen} onClose={() => setIsModalPhotoOpen(false)} typeModal="photo"></ModalProfile>
                 <ModalProfile isOpen={isModalNameOpen} onClose={() => setIsModalNameOpen(false)} typeModal="name"></ModalProfile>
             </div>
