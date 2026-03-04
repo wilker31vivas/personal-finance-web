@@ -10,8 +10,8 @@ type TransactionsContextType = {
     updateFilter: UpdateFilterType
     resetFilters: () => void
     setFilters: (value: React.SetStateAction<Filters>) => void
-    pageCurrent: number
-    setPageCurrent: React.Dispatch<React.SetStateAction<number>>
+    currentPage: number
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>
     categories: Category[] | null
     loadData(): Promise<void>
 }
@@ -25,7 +25,7 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS)
-    const [pageCurrent, setPageCurrent] = useState(0)
+    const [currentPage, setCurrentPage] = useState(0)
     const [categories, setCategories] = useState<Category[] | null>(null)
 
     const resetFilters = () => {
@@ -34,7 +34,7 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
 
     const updateFilter = <K extends keyof Filters>(key: K, value: Filters[K]) => {
         setFilters(prev => ({ ...prev, [key]: value || "" }))
-        setPageCurrent(0)
+        setCurrentPage(0)
     }
 
     function chunkArray(array: Transaction[], size: number) {
@@ -83,7 +83,7 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
 
     return (
         <TransactionsContext.Provider value={{
-            transactionPages, error, loading, filters, updateFilter, resetFilters, setFilters, pageCurrent, setPageCurrent, categories, loadData
+            transactionPages, error, loading, filters, updateFilter, resetFilters, setFilters, currentPage, setCurrentPage, categories, loadData
         }}>
             {children}
         </TransactionsContext.Provider>

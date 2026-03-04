@@ -18,40 +18,50 @@ const INITIAL_VALUE: Transaction = {
 }
 
 export default function TransactionsTable() {
-    const { loading, transactionPages, setFilters, pageCurrent, setPageCurrent, loadData } = useTransactions()
+    const { loading, transactionPages, setFilters, currentPage, setCurrentPage, loadData } = useTransactions()
     const [isModalEditOpen, setIsModalEditOpen] = useState(false);
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [formData, setFormData] = useState<Transaction>(INITIAL_VALUE);
 
     const totalPages = transactionPages.length
     const pagesToShow = useMemo(() => {
-        return getPagination(pageCurrent + 1, totalPages)
-    }, [pageCurrent, totalPages])
+        return getPagination(currentPage + 1, totalPages)
+    }, [currentPage, totalPages])
 
     const showingTransactions = useMemo(() => {
-        if (!transactionPages[pageCurrent]) return { start: 0, end: 0 }
+        if (!transactionPages[currentPage]) return { start: 0, end: 0 }
 
         const previousTotal = transactionPages
-            .slice(0, pageCurrent)
+            .slice(0, currentPage)
             .reduce((total, page) => total + page.length, 0)
 
         return {
             start: previousTotal + 1,
-            end: previousTotal + transactionPages[pageCurrent].length
+            end: previousTotal + transactionPages[currentPage].length
         }
-    }, [transactionPages, pageCurrent])
+    }, [transactionPages, currentPage])
 
-    const canGoPrev = pageCurrent > 0
-    const canGoNext = pageCurrent < transactionPages.length - 1 && transactionPages[pageCurrent + 1]?.length > 0
+
+    const canGoPrev = currentPage === 0
+    const canGoNext = currentPage === transactionPages.length - 1
+
+    const stylePrevButton = canGoPrev ? { pointerEvents: 'none', opacity: 0.5 } : {}
+    const styleNextButton = canGoNext ? { pointerEvents: 'none', opacity: 0.5 } : {}
 
 
     const handlePage = useCallback((index: number) => {
-        setPageCurrent(index)
-    }, [setPageCurrent])
+        setCurrentPage(index)
+    }, [setCurrentPage])
 
     const totalTransactions = useMemo(() => {
         return transactionPages.reduce((total, page) => total + page.length, 0)
     }, [transactionPages])
+
+    const buildPageURL = (page) => {
+        const url = new URL(window.location)
+        url.searchParams.set('page', page)
+        return `${url.pathname}?${url.searchParams.toString()}`
+    }
 
     return (
         <div className="bg-surface dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm dark:shadow-slate-900/50">
@@ -86,7 +96,7 @@ export default function TransactionsTable() {
                                 </td>
                             </tr>
                         ) : (
-                            transactionPages[pageCurrent]?.map((item) => (
+                            transactionPages[currentPage]?.map((item) => (
                                 <tr key={item.id} className="hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
@@ -166,14 +176,15 @@ export default function TransactionsTable() {
                             Showing {showingTransactions.start} to {showingTransactions.end} of {totalTransactions} transactions
                         </span>
                         <div className='flex gap-2'>
-                            <button
+                            <a
+                                href={buildPageURL(currentPage - 1)}
                                 aria-label="Previous page"
-                                onClick={() => handlePage(pageCurrent - 1)}
-                                disabled={!canGoPrev}
+                                onClick={() => handlePage(currentPage - 1)}
+                                style={stylePrevButton}
                                 className="cursor-pointer p-3 text-sm font-medium rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 ←
-                            </button>
+                            </a>
                             {pagesToShow.map((page, index) => {
                                 if (page === "...") {
                                     return (
@@ -183,11 +194,12 @@ export default function TransactionsTable() {
                                     )
                                 }
                                 const pageIndex = Number(page) - 1
-                                const isActive = pageIndex === pageCurrent
+                                const isActive = pageIndex === currentPage
 
                                 return (
-                                    <button
+                                    <a
                                         key={page}
+                                        href={buildPageURL(page)}
                                         onClick={() => handlePage(pageIndex)}
                                         className={`cursor-pointer px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                         ${isActive
@@ -196,17 +208,18 @@ export default function TransactionsTable() {
                                             }`}
                                     >
                                         {page}
-                                    </button>
+                                    </a>
                                 )
                             })}
-                            <button
+                            <a
+                                href={buildPageURL(currentPage + 1)}
                                 aria-label="Next page"
-                                onClick={() => handlePage(pageCurrent + 1)}
-                                disabled={!canGoNext}
+                                style={styleNextButton}
+                                onClick={() => handlePage(currentPage + 1)}
                                 className="cursor-pointer p-3 text-sm font-medium rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 →
-                            </button>
+                            </a>
                         </div>
                     </div>
                 )}
