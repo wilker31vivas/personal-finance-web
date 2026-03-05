@@ -3,7 +3,7 @@ import { getTransactions, getCategories } from '../api/transactions'
 import type { Transaction, Filters, UpdateFilterType, Category } from "../types/types"
 
 type TransactionsContextType = {
-    transactionPages: Transaction[][]
+    transactionsByPage: Transaction[][]
     error: string | null
     loading: boolean
     filters: Filters
@@ -21,7 +21,7 @@ export const TransactionsContext = createContext<TransactionsContextType | null>
 export const INITIAL_FILTERS: Filters = { month: "", year: "", type: "", category: "" }
 
 export function TransactionsContextProvider({ children }: { children: React.ReactNode }) {
-    const [transactionPages, setTransactionsPages] = useState<Transaction[][]>([])
+    const [transactionsByPage, setTransactionsByPage] = useState<Transaction[][]>([])
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS)
@@ -37,6 +37,7 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
         setCurrentPage(0)
     }
 
+    // divide o array em array de 5 items cada
     function chunkArray(array: Transaction[], size: number) {
         const result = [];
 
@@ -54,7 +55,7 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
         try {
             const t = await getTransactions(filters)
             const tPages = chunkArray(t, 5)
-            setTransactionsPages(tPages);
+            setTransactionsByPage(tPages);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Error loading transactions')
         }
@@ -83,7 +84,7 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
 
     return (
         <TransactionsContext.Provider value={{
-            transactionPages, error, loading, filters, updateFilter, resetFilters, setFilters, currentPage, setCurrentPage, categories, loadData
+            transactionsByPage, error, loading, filters, updateFilter, resetFilters, setFilters, currentPage, setCurrentPage, categories, loadData
         }}>
             {children}
         </TransactionsContext.Provider>

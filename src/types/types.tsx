@@ -52,3 +52,8 @@ export type UserSession = {
     userName: string,
     userAvatar: string
 }
+
+export type TransactionsHeaderProps = {
+    open: () => void,
+    resetForm: () => void
+}

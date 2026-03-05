@@ -1,5 +1,5 @@
 export default function getPagination(current: number, total: number) {
-    const delta = 1 // cuántas páginas mostrar a cada lado
+    const delta = 1
     const range: (number | string)[] = []
 
     const left = Math.max(2, current - delta)
