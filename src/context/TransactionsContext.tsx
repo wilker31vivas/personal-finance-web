@@ -3,7 +3,7 @@ import { getTransactions, getCategories } from '../api/transactions'
 import type { Transaction, Filters, UpdateFilterType, Category } from "../types/types"
 
 type TransactionsContextType = {
-    transactionsByPage: Transaction[][]
+    transactions: Transaction[]
     error: string | null
     loading: boolean
     filters: Filters
@@ -11,22 +11,51 @@ type TransactionsContextType = {
     resetFilters: () => void
     setFilters: (value: React.SetStateAction<Filters>) => void
     currentPage: number
-    setCurrentPage: React.Dispatch<React.SetStateAction<number>>
+    onPageChange: (page: number) => void
     categories: Category[] | null
     loadData(): Promise<void>
+    totalPages: number
+    pagedResults: Transaction[]
+    formData: Transaction
+    setFormData: React.Dispatch<React.SetStateAction<Transaction>>
+    isModalEditOpen: boolean
+    isModalDeleteOpen: boolean
+    setIsModalDeleteOpen: React.Dispatch<React.SetStateAction<boolean>>
+    setIsModalEditOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const TransactionsContext = createContext<TransactionsContextType | null>(null)
 
 export const INITIAL_FILTERS: Filters = { month: "", year: "", type: "", category: "" }
 
+const INITIAL_TRANSACTION: Transaction = {
+    id: "",
+    description: '',
+    amount: 0,
+    type: 'expense',
+    category: '',
+    date: ''
+}
+
+export const RESULT_PER_PAGE = 5
+
 export function TransactionsContextProvider({ children }: { children: React.ReactNode }) {
-    const [transactionsByPage, setTransactionsByPage] = useState<Transaction[][]>([])
+    const [transactions, setTransactions] = useState<Transaction[]>([])
+    const [currentPage, setCurrentPage] = useState(1)
+    
+    const totalPages = Math.ceil(transactions.length / RESULT_PER_PAGE)
+    const pagedResults = transactions.slice(
+        (currentPage - 1) * RESULT_PER_PAGE,
+        currentPage * RESULT_PER_PAGE
+    )
+
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS)
-    const [currentPage, setCurrentPage] = useState(0)
     const [categories, setCategories] = useState<Category[] | null>(null)
+    const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+    const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+    const [formData, setFormData] = useState<Transaction>(INITIAL_TRANSACTION);
 
     const resetFilters = () => {
         setFilters(INITIAL_FILTERS)
@@ -37,25 +66,17 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
         setCurrentPage(0)
     }
 
-    // divide o array em array de 5 items cada
-    function chunkArray(array: Transaction[], size: number) {
-        const result = [];
-
-        for (let i = 0; i < array.length; i += size) {
-            const chunk = array.slice(i, i + size);
-            result.push(chunk);
-        }
-
-        return result;
+    const onPageChange = (page: number) => {
+        setCurrentPage(page)
     }
+
 
     async function loadData() {
         setLoading(true)
         setError(null)
         try {
             const t = await getTransactions(filters)
-            const tPages = chunkArray(t, 5)
-            setTransactionsByPage(tPages);
+            setTransactions(t);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Error loading transactions')
         }
@@ -84,7 +105,13 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
 
     return (
         <TransactionsContext.Provider value={{
-            transactionsByPage, error, loading, filters, updateFilter, resetFilters, setFilters, currentPage, setCurrentPage, categories, loadData
+            transactions, error, loading,
+            filters, updateFilter, resetFilters,
+            setFilters, currentPage, onPageChange,
+            categories, loadData, totalPages,
+            pagedResults, formData, setFormData,
+            isModalDeleteOpen, setIsModalDeleteOpen,
+            isModalEditOpen, setIsModalEditOpen
         }}>
             {children}
         </TransactionsContext.Provider>

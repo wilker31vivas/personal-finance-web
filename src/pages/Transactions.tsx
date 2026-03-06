@@ -4,7 +4,7 @@ import { FilterByYear, FilterByCategory, FilterByMonth, FilterByType, FilterButt
 import TransactionsTable from '../components/TransactionsTable'
 import { useTransactions, INITIAL_FILTERS } from '../context/TransactionsContext';
 import { ModalTransaction } from '../components/Modal'
-import type { Transaction, TransactionsHeaderProps } from '../types/types';
+import type { Transaction } from '../types/types';
 
 const getTodayLocalDate = () => {
     const today = new Date();
@@ -38,6 +38,11 @@ function FilterSection() {
             </div>
         </div>
     )
+}
+
+type TransactionsHeaderProps = {
+    open: () => void,
+    resetForm: () => void
 }
 
 function TransactionsHeader({ open, resetForm }: TransactionsHeaderProps) {
