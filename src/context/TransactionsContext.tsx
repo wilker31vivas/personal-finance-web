@@ -9,7 +9,6 @@ type TransactionsContextType = {
     filters: Filters
     updateFilter: UpdateFilterType
     resetFilters: () => void
-    setFilters: (value: React.SetStateAction<Filters>) => void
     currentPage: number
     onPageChange: (page: number) => void
     categories: Category[] | null
@@ -42,7 +41,7 @@ export const RESULT_PER_PAGE = 5
 export function TransactionsContextProvider({ children }: { children: React.ReactNode }) {
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [currentPage, setCurrentPage] = useState(1)
-    
+
     const totalPages = Math.ceil(transactions.length / RESULT_PER_PAGE)
     const pagedResults = transactions.slice(
         (currentPage - 1) * RESULT_PER_PAGE,
@@ -63,13 +62,12 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
 
     const updateFilter = <K extends keyof Filters>(key: K, value: Filters[K]) => {
         setFilters(prev => ({ ...prev, [key]: value || "" }))
-        setCurrentPage(0)
+        setCurrentPage(1)
     }
 
     const onPageChange = (page: number) => {
         setCurrentPage(page)
     }
-
 
     async function loadData() {
         setLoading(true)
@@ -77,6 +75,7 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
         try {
             const t = await getTransactions(filters)
             setTransactions(t);
+
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Error loading transactions')
         }
@@ -102,12 +101,11 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
         fetchCategories()
     }, [])
 
-
     return (
         <TransactionsContext.Provider value={{
             transactions, error, loading,
             filters, updateFilter, resetFilters,
-            setFilters, currentPage, onPageChange,
+            currentPage, onPageChange,
             categories, loadData, totalPages,
             pagedResults, formData, setFormData,
             isModalDeleteOpen, setIsModalDeleteOpen,

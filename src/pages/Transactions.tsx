@@ -69,7 +69,7 @@ function TransactionsHeader({ open, resetForm }: TransactionsHeaderProps) {
 }
 
 export default function Transactions() {
-    const { error, setFilters, loadData } = useTransactions();
+    const { error, resetFilters, loadData } = useTransactions();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState<Transaction>(getInitialTransaction());
 
@@ -80,9 +80,7 @@ export default function Transactions() {
                 <FilterSection />
 
                 {error ? (
-                    <ErrorState title={error} onRetry={() =>
-                        setFilters(INITIAL_FILTERS)
-                    } />
+                    <ErrorState title={error} onRetry={resetFilters} />
                 ) : (
                     <TransactionsTable />
                 )}

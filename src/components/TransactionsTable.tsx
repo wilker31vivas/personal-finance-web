@@ -1,5 +1,5 @@
 import Loader from './Loader'
-import { useTransactions, INITIAL_FILTERS } from '../context/TransactionsContext';
+import { useTransactions } from '../context/TransactionsContext';
 import EmptyState from './EmptyState'
 import { ModalDelete, ModalTransaction } from './Modal'
 import { deleteTransaction } from '../api/transactions'
@@ -22,7 +22,7 @@ function TableHead() {
 }
 
 export default function TransactionsTable() {
-    const { loading, pagedResults, setFilters,
+    const { loading, pagedResults, resetFilters,
         loadData, formData, setFormData,
         isModalDeleteOpen, setIsModalDeleteOpen,
         isModalEditOpen, setIsModalEditOpen } = useTransactions()
@@ -42,7 +42,7 @@ export default function TransactionsTable() {
                         ) : pagedResults.length === 0 ? (
                             <tr>
                                 <td colSpan={5} className="py-10">
-                                    <EmptyState title="No transactions found" description="We couldn't find any transactions with the applied filters" onReset={() => setFilters(INITIAL_FILTERS)} titleOnReset='Clear Filters'>
+                                    <EmptyState title="No transactions found" description="We couldn't find any transactions with the applied filters" onReset={resetFilters} titleOnReset='Clear Filters'>
                                         <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-blue-marguerite-100 dark:bg-blue-marguerite-900/30 flex items-center justify-center">
                                             <svg className="w-10 h-10 text-blue-marguerite-400 dark:text-blue-marguerite-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
