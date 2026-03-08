@@ -1,4 +1,5 @@
-import { useTransactions, RESULT_PER_PAGE } from '../context/TransactionsContext';
+import { useTransactions } from '../context/TransactionsContext';
+import { RESULT_PER_PAGE } from '../hooks/usePagination'
 import { useMemo } from 'react';
 import getPagination from '../utils/getPagination'
 
@@ -44,6 +45,11 @@ export default function Pagination() {
         }
     }
 
+    const buildPageUrl = (page) => {
+        const url = new URL(window.location)
+        url.searchParams.set('page', page)
+        return `${url.pathname}?${url.searchParams.toString()}`
+    }
 
     return (
         <nav className='px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between'>
@@ -53,7 +59,7 @@ export default function Pagination() {
             <div className='flex gap-2'>
                 <a
                     onClick={handlePrevClick}
-                    href="#"
+                    href={buildPageUrl(currentPage - 1)}
                     aria-label="Previous page"
                     className={`cursor-pointer p-3 text-sm font-medium rounded-lg transition-colors dark:text-gray-200
                                               `}
@@ -74,7 +80,7 @@ export default function Pagination() {
                     return (
                         <a
                             onClick={(e) => handleChangePage(e, item)}
-                            href="#"
+                            href={buildPageUrl(item)}
                             key={item}
                             className={`cursor-pointer px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                                     ${isActive
@@ -88,7 +94,7 @@ export default function Pagination() {
                 })}
                 <a
                     onClick={handleNextClick}
-                    href="#"
+                    href={buildPageUrl(currentPage + 1)}
                     aria-label="Next page"
                     className={`cursor-pointer p-3 text-sm font-medium rounded-lg transition-colors dark:text-gray-200`}
                 >

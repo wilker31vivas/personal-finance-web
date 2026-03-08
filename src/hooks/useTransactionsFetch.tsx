@@ -6,12 +6,20 @@ export const INITIAL_FILTERS: Filters = { month: "", year: "", type: "", categor
 
 export default function useTransactions() {
     const [loading, setLoading] = useState(false)
-    const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS)
+    const [filters, setFilters] = useState(() => {
+        const params = new URLSearchParams(window.location.search)
+        return {
+            type: params.get('type') || '',
+            category: params.get('category') || '',
+            year: params.get('year') || '',
+            month: params.get('month') || '',
+        }
+    })
     const [error, setError] = useState<string | null>(null)
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [categories, setCategories] = useState<Category[] | null>(null)
 
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         setLoading(true)
         setError(null)
         try {
@@ -24,7 +32,7 @@ export default function useTransactions() {
         finally {
             setLoading(false)
         }
-    }
+    }, [filters])
 
     const resetFilters = useCallback(() => {
         setFilters(INITIAL_FILTERS)

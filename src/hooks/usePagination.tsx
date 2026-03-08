@@ -5,7 +5,11 @@ export const RESULT_PER_PAGE = 5
 
 export default function usePagination(transactions: Transaction[]) {
 
-    const [currentPage, setCurrentPage] = useState(1)
+    const [currentPage, setCurrentPage] = useState(()=>{
+        const params = new URLSearchParams(window.location.search)
+        const page = params.get("page")
+        return page ? Number(page) : 1 
+    })
     const totalPages = useMemo(
         () => Math.ceil(transactions.length / RESULT_PER_PAGE),
         [transactions]
