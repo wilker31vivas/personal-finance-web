@@ -5,7 +5,6 @@ import TransactionsTable from '../components/TransactionsTable'
 import { useTransactions } from '../context/TransactionsContext';
 import { ModalTransaction } from '../components/Modal'
 import type { Transaction } from '../types/types';
-import { INITIAL_FILTERS } from '../hooks/useTransactionsFetch'
 
 const getTodayLocalDate = () => {
     const today = new Date();

@@ -5,7 +5,7 @@ import getPagination from '../utils/getPagination'
 import { Link, useSearchParams } from 'react-router-dom';
 
 export default function Pagination() {
-    const { transactions, currentPage, onPageChange, totalPages } = useTransactions()
+    const { transactions, currentPage, totalPages } = useTransactions()
     const pageIndex = currentPage - 1
     const [searchParams] = useSearchParams();
 
@@ -25,32 +25,15 @@ export default function Pagination() {
         return getPagination(currentPage, totalPages)
     }, [currentPage, totalPages])
 
-    const handlePrevClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        if (currentPage !== 1) {
-            onPageChange(String(currentPage - 1))
+    const buildPageUrl = (page: number): string => {
+        const params = new URLSearchParams(searchParams)
+        if (page === 1) {
+            params.delete("page")
+        } else {
+            params.set("page", String(page))
         }
-    }
 
-    const handleNextClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        if (currentPage !== totalPages) {
-            onPageChange(String(currentPage + 1))
-        }
-    }
-
-    const handleChangePage = (e: React.MouseEvent<HTMLAnchorElement>, page: number) => {
-        e.preventDefault()
-
-        if (page !== currentPage) {
-            onPageChange(String(page))
-        }
-    }
-
-    const buildPageUrl = (page: string): string => {
-        const params  = new URLSearchParams(searchParams)
-        params.set('page', page)
-        return `${params.toString()}`
+        return `?${params.toString()}`
     }
 
     return (
@@ -60,11 +43,15 @@ export default function Pagination() {
             </span>
             <div className='flex gap-2'>
                 <Link
-                    onClick={handlePrevClick}
-                    to={buildPageUrl(String(currentPage - 1))}
+                    aria-disabled={currentPage === 1}
+                    to={buildPageUrl(currentPage - 1)}
                     aria-label="Previous page"
-                    className={`cursor-pointer p-3 text-sm font-medium rounded-lg transition-colors dark:text-gray-200
-                                              `}
+                    className={`p-3 text-sm font-medium rounded-lg transition-colors dark:text-gray-200
+                            ${currentPage === 1
+                            ? "pointer-events-none opacity-50 cursor-not-allowed"
+                            : "hover:bg-slate-200"}
+                                `}
+
                 >
                     ←
                 </Link>
@@ -81,8 +68,7 @@ export default function Pagination() {
 
                     return (
                         <Link
-                            onClick={(e) => handleChangePage(e, Number(item))}
-                            to={buildPageUrl(String(item))}
+                            to={buildPageUrl(pageNumber)}
                             key={item}
                             className={`cursor-pointer px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                                     ${isActive
@@ -95,10 +81,13 @@ export default function Pagination() {
                     )
                 })}
                 <Link
-                    onClick={handleNextClick}
-                    to={buildPageUrl(String(currentPage + 1))}
+                    to={buildPageUrl(currentPage + 1)}
                     aria-label="Next page"
-                    className={`cursor-pointer p-3 text-sm font-medium rounded-lg transition-colors dark:text-gray-200`}
+                    className={`p-3 text-sm font-medium rounded-lg transition-colors dark:text-gray-200
+                            ${currentPage === totalPages
+                            ? "pointer-events-none opacity-50 cursor-not-allowed"
+                            : "hover:bg-slate-200"}
+                                `}
                 >
                     →
                 </Link>

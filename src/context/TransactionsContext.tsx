@@ -12,7 +12,6 @@ type TransactionsContextType = {
     updateFilter: (key: FilterKey, value: string) => void
     resetFilters: () => void
     currentPage: number
-    onPageChange: (page: string) => void
     categories: Category[] | null
     loadData: () => Promise<void>
     totalPages: number
@@ -29,7 +28,7 @@ export const TransactionsContext = createContext<TransactionsContextType | null>
 
 export function TransactionsContextProvider({ children }: { children: React.ReactNode }) {
     const { transactions, loading, error, filters, updateFilter, resetFilters, categories, loadData } = useTransactionsFetch()
-    const { pagedResults, totalPages, currentPage, onPageChange } = usePagination(transactions)
+    const { pagedResults, totalPages, currentPage } = usePagination(transactions)
     const { isModalEditOpen, setIsModalEditOpen, isModalDeleteOpen, setIsModalDeleteOpen, formData, setFormData } = useTransactionForm()
 
     return (
@@ -37,8 +36,8 @@ export function TransactionsContextProvider({ children }: { children: React.Reac
             transactions, error, loading,
             filters, updateFilter, resetFilters,
             loadData, categories, currentPage,
-            onPageChange, totalPages,
-            pagedResults, formData, setFormData,
+            totalPages, pagedResults, formData, 
+            setFormData,
             isModalDeleteOpen, setIsModalDeleteOpen,
             isModalEditOpen, setIsModalEditOpen
         }}>

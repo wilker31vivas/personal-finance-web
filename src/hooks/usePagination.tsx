@@ -1,11 +1,11 @@
-import { useState, useMemo, useCallback } from "react";
+import { useMemo } from "react";
 import type { Transaction } from "../types/types"
 import { useSearchParams } from 'react-router-dom';
 
 export const RESULT_PER_PAGE = 5
 
 export default function usePagination(transactions: Transaction[]) {
-    const [searchParams, setSearchParams] = useSearchParams()
+    const [searchParams] = useSearchParams()
     const currentPage = Number(searchParams.get('page') ?? '1')
 
     const totalPages = useMemo(
@@ -20,16 +20,7 @@ export default function usePagination(transactions: Transaction[]) {
         [transactions, currentPage]
     )
 
-    const onPageChange = (page: string) => {
-        const params = new URLSearchParams(searchParams);
-
-        if(page !== "1") {
-            params.set("page", page);
-            setSearchParams(params);
-        }
-    }
-
     return {
-        totalPages, pagedResults, onPageChange, currentPage
+        totalPages, pagedResults, currentPage
     }
 }
