@@ -1,23 +1,22 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { getTransactions, getCategories } from '../api/transactions'
 import type { Transaction, Filters, Category } from "../types/types"
+import { useSearchParams } from 'react-router-dom';
 
 export const INITIAL_FILTERS: Filters = { month: "", year: "", type: "", category: "" }
-
-export default function useTransactions() {
+//✅
+export default function useTransactionsFetch() {
+    const [searchParams, setSearchParams] = useSearchParams()
     const [loading, setLoading] = useState(false)
-    const [filters, setFilters] = useState(() => {
-        const params = new URLSearchParams(window.location.search)
-        return {
-            type: params.get('type') || '',
-            category: params.get('category') || '',
-            year: params.get('year') || '',
-            month: params.get('month') || '',
-        }
-    })
     const [error, setError] = useState<string | null>(null)
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [categories, setCategories] = useState<Category[] | null>(null)
+    const filters = useMemo(() => ({
+        type: searchParams.get('type') || '',
+        category: searchParams.get('category') || '',
+        year: searchParams.get('year') || '',
+        month: searchParams.get('month') || '',
+    }), [searchParams])
 
     const loadData = useCallback(async () => {
         setLoading(true)
@@ -25,7 +24,6 @@ export default function useTransactions() {
         try {
             const t = await getTransactions(filters)
             setTransactions(t);
-
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Error loading transactions')
         }
@@ -34,13 +32,32 @@ export default function useTransactions() {
         }
     }, [filters])
 
-    const resetFilters = useCallback(() => {
-        setFilters(INITIAL_FILTERS)
-    }, [])
+    const resetFilters = () => {
+        const params = new URLSearchParams(searchParams)
 
-    const updateFilter = useCallback(<K extends keyof Filters>(key: K, value: Filters[K]) => {
-        setFilters(prev => ({ ...prev, [key]: value || "" }))
-    }, [])
+        params.delete('category')
+        params.delete('month')
+        params.delete('type')
+        params.delete('year')
+
+        setSearchParams(params)
+    }
+
+    const updateFilter = (key: string, value: string) => {
+        const params = new URLSearchParams(searchParams)
+
+        if (value) {
+            params.set(key, value);
+        } else {
+            params.delete(key);
+        }
+
+        setSearchParams(params);
+    }
+
+    useEffect(() => {
+        loadData()
+    }, [filters])
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -54,10 +71,6 @@ export default function useTransactions() {
 
         fetchCategories()
     }, [])
-
-    useEffect(() => {
-        loadData()
-    }, [filters])
 
     return {
         loading, error, transactions, loadData, resetFilters, updateFilter, categories, filters

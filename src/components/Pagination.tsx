@@ -2,10 +2,12 @@ import { useTransactions } from '../context/TransactionsContext';
 import { RESULT_PER_PAGE } from '../hooks/usePagination'
 import { useMemo } from 'react';
 import getPagination from '../utils/getPagination'
+import { Link, useSearchParams } from 'react-router-dom';
 
 export default function Pagination() {
     const { transactions, currentPage, onPageChange, totalPages } = useTransactions()
     const pageIndex = currentPage - 1
+    const [searchParams] = useSearchParams();
 
     const totalTransactions = transactions.length
 
@@ -23,32 +25,32 @@ export default function Pagination() {
         return getPagination(currentPage, totalPages)
     }, [currentPage, totalPages])
 
-    const handlePrevClick = (e) => {
+    const handlePrevClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         if (currentPage !== 1) {
-            onPageChange(currentPage - 1)
+            onPageChange(String(currentPage - 1))
         }
     }
 
-    const handleNextClick = (e) => {
+    const handleNextClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         if (currentPage !== totalPages) {
-            onPageChange(currentPage + 1)
+            onPageChange(String(currentPage + 1))
         }
     }
 
-    const handleChangePage = (e, page) => {
+    const handleChangePage = (e: React.MouseEvent<HTMLAnchorElement>, page: number) => {
         e.preventDefault()
 
         if (page !== currentPage) {
-            onPageChange(page)
+            onPageChange(String(page))
         }
     }
 
-    const buildPageUrl = (page) => {
-        const url = new URL(window.location)
-        url.searchParams.set('page', page)
-        return `${url.pathname}?${url.searchParams.toString()}`
+    const buildPageUrl = (page: string): string => {
+        const params  = new URLSearchParams(searchParams)
+        params.set('page', page)
+        return `${params.toString()}`
     }
 
     return (
@@ -57,15 +59,15 @@ export default function Pagination() {
                 Showing {showingTransactions.start} to {showingTransactions.end} of {totalTransactions} transactions
             </span>
             <div className='flex gap-2'>
-                <a
+                <Link
                     onClick={handlePrevClick}
-                    href={buildPageUrl(currentPage - 1)}
+                    to={buildPageUrl(String(currentPage - 1))}
                     aria-label="Previous page"
                     className={`cursor-pointer p-3 text-sm font-medium rounded-lg transition-colors dark:text-gray-200
                                               `}
                 >
                     ←
-                </a>
+                </Link>
                 {pagesToShow.map((item, index) => {
                     if (item === "...") {
                         return (
@@ -74,13 +76,13 @@ export default function Pagination() {
                             </span>
                         )
                     }
-                    const pageIndex = Number(item)
-                    const isActive = pageIndex === currentPage
+                    const pageNumber = Number(item)
+                    const isActive = pageNumber === currentPage
 
                     return (
-                        <a
-                            onClick={(e) => handleChangePage(e, item)}
-                            href={buildPageUrl(item)}
+                        <Link
+                            onClick={(e) => handleChangePage(e, Number(item))}
+                            to={buildPageUrl(String(item))}
                             key={item}
                             className={`cursor-pointer px-3 py-2 text-sm font-medium rounded-lg transition-colors
                                                     ${isActive
@@ -89,17 +91,17 @@ export default function Pagination() {
                                 }`}
                         >
                             {item}
-                        </a>
+                        </Link>
                     )
                 })}
-                <a
+                <Link
                     onClick={handleNextClick}
-                    href={buildPageUrl(currentPage + 1)}
+                    to={buildPageUrl(String(currentPage + 1))}
                     aria-label="Next page"
                     className={`cursor-pointer p-3 text-sm font-medium rounded-lg transition-colors dark:text-gray-200`}
                 >
                     →
-                </a>
+                </Link>
             </div>
         </nav>
     )
