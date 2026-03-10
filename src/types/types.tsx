@@ -40,10 +40,10 @@ export interface DataOptions {
 }
 
 export type Filters = {
-    type: string;
-    category: string;
-    year: string;
-    month: string;
+    type?: string;
+    category?: string;
+    year?: string;
+    month?: string;
 }
 
 export type FilterKey = keyof Filters

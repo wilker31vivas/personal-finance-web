@@ -7,8 +7,8 @@ export default function Login() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-marguerite-50 via-purple-50 to-blue-marguerite-100 flex items-center justify-center p-4">
-            <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+        <div className="min-h-screen bg-background-light dark:bg-background-dark text-slate-900 flex items-center justify-center p-4">
+            <div className="dark:bg-white dark:border-white/50 border-background-dark/50 bg-background-dark backdrop-blur-lg rounded-3xl shadow-2xl border  overflow-hidden">
                 <div className="h-2 bg-gradient-to-r from-blue-marguerite-400 via-purple-500 to-blue-marguerite-600"></div>
 
                 <div className="flex flex-col gap-3 p-6 sm:p-8">
@@ -52,7 +52,7 @@ export default function Login() {
                         <div>
                             <label
                                 htmlFor="username"
-                                className="block text-sm font-semibold text-text mb-2 flex items-center gap-2"
+                                className="text-sm font-semibold dark:text-text text-text-muted mb-2 flex items-center gap-2"
                             >
                                 Username
                             </label>
@@ -68,7 +68,7 @@ export default function Login() {
                         </div>
 
                         <button
-                            className="group w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-marguerite-500 to-purple-600 hover:from-blue-marguerite-600 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg"
+                            className="cursor-pointer group w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-marguerite-500 to-purple-600 hover:from-blue-marguerite-600 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg"
                         >
                             <span>Create Account</span>
                         </button>
