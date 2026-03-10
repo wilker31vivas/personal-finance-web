@@ -52,3 +52,5 @@ export type UserSession = {
     userName: string,
     userAvatar: string
 }
+
+export type UpdateFilterType = (key: keyof Filters, value: string) => void
