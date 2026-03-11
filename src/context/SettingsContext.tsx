@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import type { UserSession } from '../types/types'
+import { useNavigate } from "react-router-dom";
 
 type SettingsContexType = {
     user: UserSession | null,
@@ -34,6 +35,7 @@ export function SettingsContextProvider({ children }: { children: React.ReactNod
         "https://api.dicebear.com/9.x/dylan/svg?seed=Robert&mood=confused,happy,hopeful,neutral,superHappy",
         "https://api.dicebear.com/9.x/dylan/svg?seed=Ryan&mood=confused,happy,hopeful,neutral,superHappy",
     ]
+    const navigateTo = useNavigate()
     const [user, setUser] = useState<UserSession | null>(() => {
         try {
             const saved = localStorage.getItem("user-login-finances")
@@ -71,6 +73,7 @@ export function SettingsContextProvider({ children }: { children: React.ReactNod
             userName,
             userAvatar
         });
+        navigateTo("/")
     };
 
     const updateUserAvatar = (avatar: string) => {
