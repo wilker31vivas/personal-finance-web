@@ -11,8 +11,8 @@ const Dashboard = lazy(() => import("./pages/Dashboard"))
 const Transactions = lazy(() => import("./pages/Transactions"))
 const Categories = lazy(() => import("./pages/Categories"))
 const Settings = lazy(() => import("./pages/Settings"))
-const NotFound = lazy(() => import("./components/NotFound"))
 const Login = lazy(() => import("./pages/Login"))
+const NotFound = lazy(() => import("./pages/NotFound"))
 
 
 function App() {

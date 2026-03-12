@@ -1,4 +1,3 @@
-
 export default function NotFound() {
     const handleGoHome = () => {
         window.location.href = '/';

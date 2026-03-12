@@ -1,0 +1,82 @@
+import { useState } from "react"
+import { useSettings } from '../context/SettingsContext'
+import { ModalProfile } from '../components/Modal'
+
+export default function Login() {
+    const { userAvatar, userName, saveUser, setUserName } = useSettings()
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    return (
+        <div className="min-h-screen bg-background-light dark:bg-background-dark text-slate-900 flex items-center justify-center p-4">
+            <div className="dark:bg-white dark:border-white/50 border-background-dark/50 bg-background-dark backdrop-blur-lg rounded-3xl shadow-2xl border  overflow-hidden">
+                <div className="h-2 bg-gradient-to-r from-blue-marguerite-400 via-purple-500 to-blue-marguerite-600"></div>
+
+                <div className="flex flex-col gap-3 p-6 sm:p-8">
+                    <div className="flex flex-col text-center gap-2">
+                        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
+                            Create Account
+                        </h1>
+                        <p className="text-text-muted">
+                            Join us and start managing your finances
+                        </p>
+                    </div>
+
+                    <div className="flex justify-center ">
+                        <div className="relative group cursor-pointer" onClick={() => setIsModalOpen(true)}>
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-blue-marguerite-500 to-purple-600 rounded-full blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
+
+                                <div className="relative w-28 h-28 rounded-full overflow-hidden ring-4 ring-white shadow-xl group-hover:ring-blue-marguerite-300 transition-all duration-300">
+                                    <img
+                                        src={userAvatar}
+                                        alt="User avatar"
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                    />
+
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                            <div className="text-center">
+                                                <p className="text-xs text-white font-semibold">Upload</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="absolute bottom-0 right-0 bg-gradient-to-r from-blue-marguerite-500 to-blue-marguerite-600 rounded-full p-2.5 shadow-lg group-hover:scale-110 transition-transform duration-300 border-4 border-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <form onSubmit={saveUser} className="space-y-4">
+                        <div>
+                            <label
+                                htmlFor="username"
+                                className="text-sm font-semibold dark:text-text text-text-muted mb-2 flex items-center gap-2"
+                            >
+                                Username
+                            </label>
+                            <input
+                                id="username"
+                                type="text"
+                                value={userName}
+                                onChange={e => setUserName(e.target.value)}
+                                required
+                                placeholder="Choose a username"
+                                className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl font-medium text-text placeholder:text-gray-400 focus:border-blue-marguerite-500 focus:ring-4 focus:ring-blue-marguerite-100 transition-all outline-none"
+                            />
+                        </div>
+
+                        <button
+                            className="cursor-pointer group w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-marguerite-500 to-purple-600 hover:from-blue-marguerite-600 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg"
+                        >
+                            <span>Create Account</span>
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+            <ModalProfile isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} typeModal="photo"></ModalProfile>
+        </div>
+    );
+}
