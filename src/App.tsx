@@ -6,6 +6,7 @@ import { useSettings } from "./context/SettingsContext"
 import { LoadingFallback } from './components/Fallback'
 import Aside from "./components/Aside"
 import ProtectedRoute from './components/ProtectedRoute'
+import Footer from "./components/Footer"
 
 const Dashboard = lazy(() => import("./pages/Dashboard"))
 const Transactions = lazy(() => import("./pages/Transactions"))
@@ -43,6 +44,8 @@ function App() {
           </Routes>
         </Suspense>
       </main>
+
+      <Footer />
     </div>
   )
 }
