@@ -19,7 +19,7 @@ export default function Login() {
     ];
 
     return (
-        <div className="min-h-screen text-slate-900 grid grid-cols-2 ">
+        <div className="min-h-screen text-slate-900 grid sm:grid-cols-2 ">
             <div className="relative overflow-hidden bg-gradient-to-br from-blue-marguerite-600 to-purple-700 flex items-center justify-center p-8 lg:p-16 order-2 lg:order-1">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-blue-marguerite-400 rounded-full opacity-20 blur-3xl"></div>
                 <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-500 rounded-full opacity-20 blur-3xl"></div>
