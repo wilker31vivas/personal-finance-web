@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="border-t mt-10 py-6 text-sm text-center text-gray-500">
+    <footer className="border-t py-6 text-sm text-center text-gray-500">
       <p>
         Built by <span className="font-semibold">Wilker Vivas</span>
       </p>

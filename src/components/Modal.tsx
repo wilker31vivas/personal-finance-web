@@ -562,7 +562,7 @@ function AvatarModal({ onClose }: { onClose: () => void }) {
             </div>
             <button
                 onClick={onClose}
-                className="w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
+                className="cursor-pointer w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
             >
                 Cancel
             </button>

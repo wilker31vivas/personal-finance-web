@@ -6,22 +6,62 @@ export default function Login() {
     const { userAvatar, userName, saveUser, setUserName } = useSettings()
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    return (
-        <div className="min-h-screen bg-background-light dark:bg-background-dark text-slate-900 flex items-center justify-center p-4">
-            <div className="dark:bg-white dark:border-white/50 border-background-dark/50 bg-background-dark backdrop-blur-lg rounded-3xl shadow-2xl border  overflow-hidden">
-                <div className="h-2 bg-gradient-to-r from-blue-marguerite-400 via-purple-500 to-blue-marguerite-600"></div>
+    const features = [
+        {
+            text: "Easily record and edit your transactions"
+        },
+        {
+            text: "Organize by custom categories"
+        },
+        {
+            text: "View your expenses on an interactive dashboard"
+        }
+    ];
 
+    return (
+        <div className="min-h-screen text-slate-900 grid grid-cols-2 ">
+            <div className="relative overflow-hidden bg-gradient-to-br from-blue-marguerite-600 to-purple-700 flex items-center justify-center p-8 lg:p-16 order-2 lg:order-1">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-blue-marguerite-400 rounded-full opacity-20 blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-500 rounded-full opacity-20 blur-3xl"></div>
+
+                <div className="relative max-w-xl text-white z-10">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-6 leading-tight">
+                        Understand where your money goes
+                    </h1>
+
+                    <p className="text-xl sm:text-2xl text-blue-marguerite-100 mb-12 leading-relaxed">
+                        Record your daily expenses, organize everything into categories, and visualize your money with clear graphs.
+                    </p>
+
+                    <ul className="space-y-5">
+                        {features.map((feature, index) => (
+                            <li
+                                key={index}
+                                className="flex items-start gap-4 group"
+                            >
+                                <span className="text-lg text-blue-marguerite-50 leading-relaxed">
+                                    {feature.text}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+
+            <div className="flex items-center justify-center p-6 sm:p-8 lg:p-16 order-1 lg:order-2">
                 <div className="flex flex-col gap-3 p-6 sm:p-8">
-                    <div className="flex flex-col text-center gap-2">
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
-                            Create Account
-                        </h1>
-                        <p className="text-text-muted">
+                    <div className="text-center mb-8">
+                        <div className="inline-flex items-center gap-2 mb-4">
+                            <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
+                                Create Account
+                            </h2>
+                        </div>
+                        <p className="text-text-muted text-lg">
                             Join us and start managing your finances
                         </p>
                     </div>
 
-                    <div className="flex justify-center ">
+                    <div className="flex justify-center">
                         <div className="relative group cursor-pointer" onClick={() => setIsModalOpen(true)}>
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-marguerite-500 to-purple-600 rounded-full blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
@@ -52,7 +92,7 @@ export default function Login() {
                         <div>
                             <label
                                 htmlFor="username"
-                                className="text-sm font-semibold dark:text-text text-text-muted mb-2 flex items-center gap-2"
+                                className="text-sm font-semibold text-text dark:text-text-muted mb-2 flex items-center gap-2"
                             >
                                 Username
                             </label>
