@@ -8,19 +8,23 @@ export default function Login() {
 
     const features = [
         {
+            icon: "✅",
             text: "Easily record and edit your transactions"
         },
         {
+            icon: "🏷️",
             text: "Organize by custom categories"
         },
         {
+            icon: "📊",
             text: "View your expenses on an interactive dashboard"
         }
     ];
 
+
     return (
-        <div className="min-h-screen text-slate-900 grid sm:grid-cols-2 ">
-            <div className="relative overflow-hidden bg-gradient-to-br from-blue-marguerite-600 to-purple-700 flex items-center justify-center p-8 lg:p-16 order-2 lg:order-1">
+        <div className="min-h-screen grid lg:grid-cols-2 text-slate-900 bg-gradient-to-br from-blue-marguerite-600 to-purple-700">
+            <div className="relative overflow-hidden bg-gradient-to-br from-blue-marguerite-600 to-purple-700 flex items-center justify-center p-8 lg:p-16">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-blue-marguerite-400 rounded-full opacity-20 blur-3xl"></div>
                 <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-500 rounded-full opacity-20 blur-3xl"></div>
 
@@ -39,6 +43,9 @@ export default function Login() {
                                 key={index}
                                 className="flex items-start gap-4 group"
                             >
+                                <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg group-hover:bg-white/30 transition-all duration-300">
+                                    <span className="text-lg sm:text-2xl">{feature.icon}</span>
+                                </div>
                                 <span className="text-lg text-blue-marguerite-50 leading-relaxed">
                                     {feature.text}
                                 </span>
@@ -48,9 +55,9 @@ export default function Login() {
                 </div>
             </div>
 
-            <div className="flex items-center justify-center p-6 sm:p-8 lg:p-16 order-1 lg:order-2">
+            <div className="flex items-center justify-center bg-background-light dark:bg-background-dark ">
                 <div className="flex flex-col gap-3 p-6 sm:p-8">
-                    <div className="text-center mb-8">
+                    <div className="text-center mb-4 sm:mb-8">
                         <div className="inline-flex items-center gap-2 mb-4">
                             <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
                                 Create Account
