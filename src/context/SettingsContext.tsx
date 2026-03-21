@@ -36,7 +36,7 @@ export function SettingsContextProvider({ children }: { children: React.ReactNod
         saveUser,
         updateUserAvatar,
         updateUserName,
-    } = useSettingsForm({ user, setUser, navigateTo })
+    } = useSettingsForm({ setUser, navigateTo })
 
     return (
         <SettingsContext.Provider

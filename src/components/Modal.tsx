@@ -522,14 +522,14 @@ function NameModal({ onClose }: { onClose: () => void }) {
                 </div>
                 <div className='flex gap-4'>
                     <button type='submit'
-                        className="w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
+                        className="w-full cursor-pointer px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
                     >
                         <span>Save name</span>
                     </button>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
+                        className="w-full cursor-pointer px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
                     >
                         Cancel
                     </button>

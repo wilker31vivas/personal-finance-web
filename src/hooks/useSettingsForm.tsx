@@ -18,12 +18,11 @@ const avatarsURL = [
 ];
 
 type UseSettingsFormOptions = {
-    user: UserSession | null;
     setUser: React.Dispatch<React.SetStateAction<UserSession | null>>;
     navigateTo: (path: string) => void;
 };
 
-export default function useSettingsForm({ user, setUser, navigateTo }: UseSettingsFormOptions) {
+export default function useSettingsForm({ setUser, navigateTo }: UseSettingsFormOptions) {
     const [userAvatar, setUserAvatar] = useState(INITIAL_AVATAR);
     const [userName, setUserName] = useState("");
 
