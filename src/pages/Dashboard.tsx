@@ -2,7 +2,7 @@ import BalanceCard from '../components/BalanceCard';
 import Header from '../components/Header'
 import ChartsCards from '../components/ChartsCards'
 import { FilterByYear, FilterByMonth } from '../components/Filters'
-import { useDashboard, INITIAL_FILTERS } from '../context/DashboardContext';
+import { useDashboard,  } from '../context/DashboardContext';
 import { ErrorState } from '../components/Message'
 import Loader from '../components/Loader';
 import type { Filters } from '../types/types';
@@ -39,7 +39,7 @@ function FilterSection({ filters, updateFilter }: FilterSectionProps) {
 }
 
 export default function Dashboard() {
-    const { filters, setFilters, updateFilter, error, loading, fetchDashboardData, balanceData } = useDashboard()
+    const { filters, setFilters, updateFilter, INITIAL_FILTERS, error, loading, fetchDashboardData, balanceData } = useDashboard()
 
     const totalIncome = balanceData?.transactionsAmount?.current?.income ?? 0
     const totalExpenses = balanceData?.transactionsAmount?.current?.expense ?? 0
