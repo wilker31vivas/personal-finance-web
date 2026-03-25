@@ -1,58 +1,75 @@
 import { useState, useEffect } from 'react';
-import { useTransactions } from '../context/TransactionsContext';
-import { updateTransaction, createTransaction, deleteTransaction } from '../api/transactions'
-import type { Transaction } from '../types/types';
+import { updateCategory, createCategory, getCategories, updateTransaction, createTransaction } from '../api/transactions'
+import type { Transaction, Category } from '../types/types';
 import { WarningState } from './Message';
+import { useSettings } from '../context/SettingsContext'
 
-interface ModalProps {
+interface ModalTransactionsProps {
     isOpen: boolean,
     onClose: () => void
-    action(item: Transaction): Promise<void>
     title: 'Edit' | 'Create'
     formData: Transaction
     setFormData: React.Dispatch<React.SetStateAction<Transaction>>
+    updateData: () => Promise<void>
 }
 
-interface ModalEditProps {
+type ModalCategoryProps = {
     isOpen: boolean,
-    onClose: () => void
-    formData: Transaction
-    setFormData: React.Dispatch<React.SetStateAction<Transaction>>
+    onClose: () => void,
+    title: 'Edit' | 'Create'
+    formData: Category
+    setFormData: React.Dispatch<React.SetStateAction<Category>>
+    updateData: () => Promise<void>
 }
 
-interface ModalCreateAndDeleteProps {
+type ModalDeleteProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => Promise<void> | void;
+    title: string;
+    description: string;
+    itemName?: string;
+}
+
+type ModalProfileProps = {
     isOpen: boolean,
-    onClose: () => void
-    transaction?: Transaction
+    onClose: () => void,
+    typeModal: 'name' | 'photo'
 }
 
-const getInitialTransaction = (): Transaction => {
-    const getTodayLocalDate = () => {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-
-    return {
-        description: '',
-        amount: 0,
-        type: 'expense',
-        category: 'Food',
-        date: getTodayLocalDate()
-    }
-}
-
-function Modal({ isOpen, onClose, action, title, formData, setFormData }: ModalProps) {
-    const { categories, loadData } = useTransactions();
+export function ModalTransaction({ isOpen, onClose, title, formData, setFormData, updateData }: ModalTransactionsProps) {
     const [error, setError] = useState<null | string>(null);
+    const [categories, setCategories] = useState<Category[] | null>(null)
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
 
     const validate = (data: Transaction): string | null => {
         if (!data.description.trim()) return 'The description cannot be empty.';
         if (data.amount <= 0) return 'The amount must be greater than 0';
         return null;
     };
+
+    const fetchCategories = async () => {
+        try {
+            const res = await getCategories()
+            setCategories(res)
+        } catch (err) {
+            setError(`Error loading categories: ${err}`)
+        }
+    }
+
+    useEffect(() => {
+        fetchCategories()
+    }, [])
 
     const reset = () => {
         setError(null)
@@ -80,26 +97,30 @@ function Modal({ isOpen, onClose, action, title, formData, setFormData }: ModalP
         }
 
         try {
-            await action(formData);
-            await loadData();
+            if (title === 'Edit') {
+                await updateTransaction(formData);
+            } else if (title === 'Create') {
+                await createTransaction(formData);
+            }
+            await updateData();
             reset()
         } catch (error) {
-            setError('An error occurred while saving. Please try again.');
+            setError(error instanceof Error ? error.message : 'An error occurred while saving. Please try again.');
         }
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
-            <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+            <div onClick={(e) => e.stopPropagation()} className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
                         {title} Transaction
                     </h2>
                     <button
                         onClick={reset}
-                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                        className="cursor-pointer text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         aria-label="Close modal"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,6 +217,122 @@ function Modal({ isOpen, onClose, action, title, formData, setFormData }: ModalP
                         <button
                             type="button"
                             onClick={reset}
+                            className="cursor-pointer flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="cursor-pointer flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-marguerite-500 to-blue-marguerite-600 hover:from-blue-marguerite-600 hover:to-blue-marguerite-700 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                        >
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}
+
+export function ModalCategory({ isOpen, onClose, title, formData, setFormData, updateData }: ModalCategoryProps) {
+    const [error, setError] = useState<null | string>(null);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
+
+    const validate = (data: Category): string | null => {
+        if (!data.name.trim()) return 'The name cannot be empty.';
+        return null;
+    };
+
+    const reset = () => {
+        setError(null)
+        onClose();
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setError(null);
+        const { value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            name: value
+
+        }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const validationError = validate(formData);
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
+
+        try {
+            if (title === 'Edit') {
+                await updateCategory(formData);
+            } else if (title === 'Create') {
+                await createCategory(formData);
+            }
+            await updateData();
+            reset()
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'An error occurred while saving. Please try again.');
+        }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+            <div onClick={(e) => e.stopPropagation()} className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
+                <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent">
+                        {title} Category
+                    </h2>
+                    <button
+                        onClick={reset}
+                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                        aria-label="Close modal"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                    <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-text dark:text-slate-300 mb-2">
+                            Name
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-marguerite-500 focus:border-transparent outline-none transition-all text-text dark:text-white"
+                            placeholder="Enter description..."
+                        />
+                    </div>
+
+                    {error && <WarningState message={error}></WarningState>}
+
+
+                    <div className="flex gap-3 pt-4">
+                        <button
+                            type="button"
+                            onClick={reset}
                             className="flex-1 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                         >
                             Cancel
@@ -213,65 +350,62 @@ function Modal({ isOpen, onClose, action, title, formData, setFormData }: ModalP
     );
 }
 
-export function ModalEdit({ isOpen, onClose, formData, setFormData }: ModalEditProps) {
-    return (
-        <Modal isOpen={isOpen} onClose={onClose} action={updateTransaction} title='Edit' formData={formData} setFormData={setFormData} ></Modal>
-    )
-}
-
-export function ModalCreate({ isOpen, onClose }: ModalCreateAndDeleteProps) {
-
-    const [formData, setFormData] = useState<Transaction>(getInitialTransaction());
-
-    const handleClose = () => {
-        setFormData(getInitialTransaction());
-        onClose();
-    };
-
-    return (
-        <Modal isOpen={isOpen} onClose={handleClose} action={createTransaction} title='Create' formData={formData} setFormData={setFormData}></Modal>
-    )
-
-}
-
-export function ModalDelete({ isOpen, onClose, transaction }: ModalCreateAndDeleteProps) {
-    const { loadData } = useTransactions();
+export function ModalDelete({
+    isOpen,
+    onClose,
+    onConfirm,
+    title,
+    description,
+    itemName,
+}: ModalDeleteProps) {
     const [error, setError] = useState<null | string>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
 
     useEffect(() => {
         if (isOpen) setError(null);
     }, [isOpen]);
 
-    const handleConfirm = async () => {
-        try {
-            if (transaction?.id) {
-                setIsLoading(true);
-                await deleteTransaction(transaction?.id);
-                await loadData();
-                onClose();
-            }
-        } catch {
-            setError('An error occurred while deleting. Please try again.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    if (!isOpen) return null;
 
     const handleCancel = () => {
         setError(null);
         onClose();
     };
 
-    if (!isOpen) return null;
+    const handleConfirm = async () => {
+        try {
+            setIsLoading(true);
+            await onConfirm();
+            onClose();
+        } catch (err) {
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "An unexpected error occurred."
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
-            <div className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-sm transform transition-all">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+            <div onClick={(e) => e.stopPropagation()} className="bg-surface dark:bg-surface-dark rounded-2xl shadow-2xl w-full max-w-sm transform transition-all">
 
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
-                        Delete Transaction
+                        {title}
                     </h2>
                     <button onClick={handleCancel} className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors" aria-label="Close modal">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,16 +416,19 @@ export function ModalDelete({ isOpen, onClose, transaction }: ModalCreateAndDele
 
                 <div className="p-6 space-y-4">
                     <div className="flex justify-center">
-                        <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-18 h-18 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                             </svg>
                         </div>
                     </div>
 
-                    <p className="text-center text-text dark:text-slate-300 text-sm">
-                        Are you sure you want to delete the transaction{' '}
-                        <span className="font-semibold text-text dark:text-white">"{transaction?.description}"</span>?
+                    <p className="text-center text-text dark:text-slate-300 text-md">
+                        {description}{" "}
+                        {itemName && (
+                            <span className="font-semibold text-text dark:text-white">"{itemName}"</span>
+                        )}
+                        <br />
                         This action cannot be undone.
                     </p>
 
@@ -319,4 +456,116 @@ export function ModalDelete({ isOpen, onClose, transaction }: ModalCreateAndDele
             </div>
         </div>
     );
+}
+
+export function ModalProfile({ isOpen, onClose, typeModal }: ModalProfileProps) {
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
+
+    if (!isOpen) return null;
+
+    return (
+        <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={onClose}
+        >
+            <div
+                className="bg-surface dark:bg-surface-dark rounded-2xl p-8 max-w-md w-full shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <h3 className="text-2xl font-bold text-text bg-gradient-to-r from-blue-marguerite-600 to-purple-600 bg-clip-text text-transparent mb-4">{typeModal === 'name' ? 'Edit your name' : 'Choose Your Avatar'}</h3>
+                {typeModal === 'name' ?
+                    <NameModal onClose={onClose} /> : <AvatarModal onClose={onClose} />
+                }
+            </div>
+        </div>
+    )
+}
+
+function NameModal({ onClose }: { onClose: () => void }) {
+    const { updateUserName, userName, setUserName } = useSettings()
+
+    return (
+        <div>
+            <form onSubmit={(e) => {
+                e.preventDefault();
+                updateUserName(userName);
+                onClose();
+            }} className="space-y-4">
+                <div>
+                    <label
+                        htmlFor="username"
+                        className="text-sm text-text-muted uppercase font-semibold items-center gap-2"
+
+                    >
+                        Username
+                    </label>
+                    <input
+                        id="username"
+                        type="text"
+                        value={userName}
+                        onChange={e => setUserName(e.target.value)}
+                        required
+                        placeholder="Change the username"
+                        className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl font-medium text-text placeholder:text-gray-400 focus:border-blue-marguerite-500 focus:ring-4 focus:ring-blue-marguerite-100 transition-all outline-none"
+                    />
+                </div>
+                <div className='flex gap-4'>
+                    <button type='submit'
+                        className="w-full cursor-pointer px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
+                    >
+                        <span>Save name</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="w-full cursor-pointer px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
+                    >
+                        Cancel
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    )
+}
+
+function AvatarModal({ onClose }: { onClose: () => void }) {
+    const { updateUserAvatar, avatarsURL } = useSettings()
+
+    return (
+        <>
+            <div className="grid grid-cols-3 gap-4 mb-6">
+                {avatarsURL.map((avatar, i) => (
+                    <div
+                        key={i}
+                        onClick={() => {
+                            updateUserAvatar(avatar);
+                            onClose();
+                        }}
+                        className="cursor-pointer rounded-full overflow-hidden ring-2 ring-gray-200 hover:ring-blue-marguerite-500 transition-all hover:scale-110"
+                    >
+                        <img src={avatar} alt={`Avatar ${i + 1}`} className="w-full h-full object-cover" />
+                    </div>
+                ))}
+            </div>
+            <button
+                onClick={onClose}
+                className="cursor-pointer w-full px-6 py-3 bg-blue-marguerite-500 hover:bg-blue-marguerite-600 text-white font-semibold rounded-xl transition-colors"
+            >
+                Cancel
+            </button>
+        </>
+    )
 }

@@ -20,7 +20,7 @@ export interface Balance {
     }
 }
 
-export interface Transaction {
+export type Transaction = {
     id?: string
     type: "income" | "expense"
     category: string
@@ -30,7 +30,7 @@ export interface Transaction {
 }
 
 export type Category = {
-    id: number
+    id?: string
     name: string
 }
 
@@ -40,10 +40,17 @@ export interface DataOptions {
 }
 
 export type Filters = {
-    type?: "" | 'income' | 'expense',
-    category?: string,
-    month?: string,
-    year?: string,
+    type?: string;
+    category?: string;
+    year?: string;
+    month?: string;
 }
 
-export type UpdateFilterType = <K extends keyof Filters>(key: K, value: Filters[K]) => void
+export type FilterKey = keyof Filters
+
+export type UserSession = {
+    userName: string,
+    userAvatar: string
+}
+
+export type UpdateFilterType = (key: keyof Filters, value: string) => void
