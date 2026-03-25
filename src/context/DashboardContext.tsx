@@ -6,11 +6,8 @@ import useDashboardData from "../hooks/useDashboardData";
 
 type DashboardContextType = {
     filters: Filters
-    updateFilter: <K extends keyof Filters>(
-        key: K,
-        value: Filters[K]
-    ) => void
-    INITIAL_FILTERS: Filters
+    updateFilter: (key: string, value: string) => void
+    resetFilters: () => void
     balanceData: Balance
     topCategories: DataOptions[]
     allCategories: DataOptions[]
@@ -20,14 +17,13 @@ type DashboardContextType = {
     loading: boolean
     error: string | null
     fetchDashboardData(): Promise<void>
-    setFilters: React.Dispatch<React.SetStateAction<Filters>>
     transactions: DataOptions[]
 }
 
 export const DashboardContext = createContext<DashboardContextType | null>(null)
 
 export function DashboardContextProvider({ children }: { children: React.ReactNode }) {
-    const { filters, setFilters, updateFilter, INITIAL_FILTERS } = useFilters();
+    const { filters, resetFilters, updateFilter } = useFilters();
     const { isMobile, isTablet, chartHeight } = useResponsive();
     const {
         topCategories,
@@ -41,7 +37,7 @@ export function DashboardContextProvider({ children }: { children: React.ReactNo
 
     return (
         <DashboardContext.Provider value={{
-            filters, setFilters, updateFilter, INITIAL_FILTERS,
+            filters, updateFilter, resetFilters,
             balanceData, topCategories, isMobile,
             isTablet, allCategories, chartHeight,
             error, loading, fetchDashboardData,
